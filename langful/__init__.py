@@ -16,11 +16,8 @@ Github: https://github.com/cueavyqwp/langful
 Issues: https://github.com/cueavyqwp/langful/issues
 
 """
-import warnings
 import locale
 import json
 import os
 
 from langful.main import *
-
-warnings.filterwarnings("ignore",category=DeprecationWarning)

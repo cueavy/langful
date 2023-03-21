@@ -24,21 +24,24 @@ class lang :
 
         default_lang: 默认使用的翻译
         """
-        if not os.path.exists( lang_dir ) :
-            raise KeyError( "'lang_dir' dir not find" ) # lang文件目录找不到
-        if not os.path.exists( os.path.join( lang_dir , default_lang + ".json" ) ) :
+        if not os.path.exists( lang_dir ) : # 判断lang文件夹是否存在
+            raise KeyError( "'lang_dir' dir not find" )
+        
+        if not len( os.listdir(lang_dir) ) : raise RuntimeError( "Give's dir has no lang file!" ) # lang文件夹里没有语言文件
+
+        if not os.path.exists( os.path.join( lang_dir , default_lang + ".json" ) ) : # 判断default_lang文件是否存在
             raise KeyError( "'default_lang' file not find" )
-        default_locale = locale.getdefaultlocale()[0].lower()
+        
+        default_locale = locale.getdefaultlocale()[0].lower() # 默认语言
         lang_file = os.path.join( lang_dir , default_locale + ".json" )
+
         use_locale = default_locale
-        if not os.path.exists( lang_file ) :
+        if not os.path.exists( lang_file ) : # 若默认语言不存在对应的本地化 那么就选用默认语言文件
             use_locale = default_lang
-            lang_file = default_lang + ".json" # 若本地化不存在就使用默认指定的语言
+            lang_file = default_lang + ".json"
 
         lang_file_list = []
         language_dict = {}
-
-        if not len( os.listdir(lang_dir) ) : raise KeyError( "Give's dir has no lang file!" )
 
         for filename in os.listdir(lang_dir):
             if len( filename ) > 5 and filename[-5:] == ".json" :
@@ -48,35 +51,50 @@ class lang :
                     lang_file_list.append( filename )
                 except : pass
 
+        #lang_dir: Translation file storage directory
+        #lang_dir: 翻译文件的存放目录
         self.lang_dir = lang_dir
+        #default_lang: Default translation
+        #default_lang: 默认使用的翻译
         self.default_lang = default_lang
-        #lang_file: Choose to use's language file
-        #lang_file: 选择使用的语言文件
+        # lang_file: Choose to use's language file
+        # lang_file: 选择使用的语言文件
         self.lang_file = lang_file
-        #lang_file_list: All can find's language file
-        #lang_file_list: 所有能找到的语言文件
+        # lang_file_list: All can find's language file
+        # lang_file_list: 所有能找到的语言文件
         self.lang_file_list = lang_file_list
+        # language_dict: Load all can read's language file
+        # language_dict: 加载所有可以读取的语言文件
         self.language_dict = language_dict
+        # language: Load need's language file
+        # language: 加载需要的语言文件
         self.language = language_dict[ use_locale ]
+        # default_locale: The default language
+        # default_locale:  默认语言
         self.default_locale = default_locale
+        # use_locale: The selected language
+        # use_locale: 选定的语言
         self.use_locale = use_locale
 
-    def get( self , name:str , language:dict = None ) :
+    def get( self , key:str , language:dict = None ) : # 输入键 获取对应的值
         if not language : language = self.language
-        if name in language :
-            return language[name]
+        if key in language :
+            return language[key]
         else:
-            if name in self.language_dict[ self.default_lang ] :
-                return language[name]
+            if key in self.language_dict[ self.default_lang ] :
+                return language[key]
             else:
-                raise KeyError( "Give's name has not in this dictionary!" )
+                raise KeyError( "Give's value has not in this dictionary!" )
+
+    def set( self , name:str , value:str , language:dict = None ) :
+        if not language : language = self.language
+        language[ name ] = value
 
     def replace( self , *args:str , language:dict = None ) :
         if not language : language = self.language
         text = "".join(args)
         i = 0
         Ret = ""
-        print(text.split( "%" ))
         for I in text.split( "%" ) :
             if i % 2 :
                 if I in language :
