@@ -38,6 +38,8 @@ class lang :
         lang_file_list = []
         language_dict = {}
 
+        if not len( os.listdir(lang_dir) ) : raise KeyError( "Give's dir has no lang file!" )
+
         for filename in os.listdir(lang_dir):
             if len( filename ) > 5 and filename[-5:] == ".json" :
                 try :
@@ -58,3 +60,26 @@ class lang :
         self.language = language_dict[ use_locale ]
         self.default_locale = default_locale
         self.use_locale = use_locale
+
+    def get( self , name:str , language:dict = None ) :
+        if not language : language = self.language
+        if name in language :
+            return language[name]
+        else:
+            KeyError( "Give's name has not in this dictionary!" )
+
+    def replace( self , *args:str , language:dict = None ) :
+        if not language : language = self.language
+        text = "".join(args)
+        i = 0
+        Ret = ""
+        for I in text.split( "%" ) :
+            if i % 2 :
+                if I in language :
+                    Ret += language[I]
+                else:
+                    KeyError( f"Name '{I}'  has not in this dictionary!" )
+            else :
+                Ret += I
+            i += 1
+        return Ret
