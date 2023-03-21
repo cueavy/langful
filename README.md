@@ -1,7 +1,9 @@
-<dvi align="center" >
-
 # langful
 
 ⚠ Warning : Under development ⚠
 
-</dvi>
+github: https://github.com/cueavyqwp/langful
+
+pypi: https://pypi.org/project/langful
+
+issues: https://github.com/cueavyqwp/langful/issues
