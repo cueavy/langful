@@ -66,19 +66,25 @@ class lang :
         if name in language :
             return language[name]
         else:
-            KeyError( "Give's name has not in this dictionary!" )
+            if name in self.language_dict[ self.default_lang ] :
+                return language[name]
+            else:
+                raise KeyError( "Give's name has not in this dictionary!" )
 
     def replace( self , *args:str , language:dict = None ) :
         if not language : language = self.language
         text = "".join(args)
         i = 0
         Ret = ""
+        print(text.split( "%" ))
         for I in text.split( "%" ) :
             if i % 2 :
                 if I in language :
                     Ret += language[I]
+                elif not I :
+                    Ret += "%"
                 else:
-                    KeyError( f"Name '{I}'  has not in this dictionary!" )
+                    raise KeyError( f"Name '{I}' has not in this dictionary!" )
             else :
                 Ret += I
             i += 1
