@@ -13,6 +13,8 @@ Help developers to localize
 
 Github: https://github.com/cueavyqwp/langful
 
+Issues: https://github.com/cueavyqwp/langful/issues
+
 """
 import warnings
 import locale
