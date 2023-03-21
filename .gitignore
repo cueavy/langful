@@ -2,3 +2,4 @@
 /test.py
 langful.egg-info/
 build/
+langful/__pycache__/

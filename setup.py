@@ -3,7 +3,7 @@ with open( "README.md" , "r" , encoding = "utf-8" ) as fh :
     long_description = fh.read()
 setuptools.setup(
     name="langful" , # 模块名称
-    version="0.12" , # 当前版本
+    version="0.13" , # 当前版本
     author="cueavyqwp" , # 作者
     author_email="cueavyqwp@outlook.com" , # 作者邮箱
     description="", # 模块简介

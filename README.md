@@ -4,12 +4,10 @@
 
 # example
 
-```
 - test.py
 - lang
     - zh_cn.json
     - en_us.json
-```
 
 ## zh_cn.json
 
@@ -36,7 +34,27 @@ import langful
 
 Text = langful.lang()
 
-print( Text.replace( "%hi%\n%welcome%" ) )
+print( Text.language_dict )
+
+print( Text.replace( "%hi%\n%%\n%welcome%" ) )
+```
+
+# Output
+
+```python
+{'en_us': {'welcome': 'Welcom', 'hi': 'Hi'}, 'zh_cn': {'welcome': '欢迎', 'hi': '你好'}}
+Hi
+%
+Welcome
+```
+
+or
+
+```python
+{'en_us': {'welcome': 'Welcom', 'hi': 'Hi'}, 'zh_cn': {'welcome': '欢迎', 'hi': '你好'}}
+你好
+%
+欢迎
 ```
 
 # About
