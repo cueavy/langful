@@ -6,19 +6,15 @@ class lang :
 
     def __init__( self , lang_dir : str = "lang" , default_lang : str = "en_us"  ) :
         """
-        # langful
+        # lang object
 
         ---
-
-        ## lang object
-
+        
         lang_dir: Translation file storage directory
 
         default_lang: Default translation
 
         ---
-
-        ## lang 对象
 
         lang_dir: 翻译文件的存放目录
 
