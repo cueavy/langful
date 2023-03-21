@@ -25,12 +25,12 @@ class lang :
         default_lang: 默认使用的翻译
         """
         if not os.path.exists( lang_dir ) : # 判断lang文件夹是否存在
-            raise KeyError( "'lang_dir' dir not find" )
+            raise KeyError( f"'{lang_dir}' dir not find" )
         
-        if not len( os.listdir(lang_dir) ) : raise RuntimeError( "Give's dir has no lang file!" ) # lang文件夹里没有语言文件
+        if not len( os.listdir(lang_dir) ) : raise RuntimeError( f"In '{lang_dir}' dir has no lang file!" ) # lang文件夹里没有语言文件
 
         if not os.path.exists( os.path.join( lang_dir , default_lang + ".json" ) ) : # 判断default_lang文件是否存在
-            raise KeyError( "'default_lang' file not find" )
+            raise KeyError( f"'{default_lang}' not find" )
         
         default_locale = locale.getdefaultlocale()[0].lower() # 默认语言
         lang_file = os.path.join( lang_dir , default_locale + ".json" )
@@ -43,7 +43,7 @@ class lang :
         lang_file_list = []
         language_dict = {}
 
-        for filename in os.listdir(lang_dir):
+        for filename in os.listdir(lang_dir): # 尝试加载所有能加载的模块
             if len( filename ) > 5 and filename[-5:] == ".json" :
                 try :
                     with open( os.path.join( lang_dir , filename ) , encoding= "utf-8" ) as file :
@@ -84,7 +84,7 @@ class lang :
             if key in self.language_dict[ self.default_lang ] :
                 return language[key]
             else:
-                raise KeyError( "Give's value has not in this dictionary!" )
+                raise KeyError( f"Key '{key}' has not in this dictionary!" )
 
     def set( self , name:str , value:str , language:dict = None ) :
         if not language : language = self.language
@@ -102,7 +102,7 @@ class lang :
                 elif not I :
                     Ret += "%"
                 else:
-                    raise KeyError( f"Name '{I}' has not in this dictionary!" )
+                    raise KeyError( f"Key '{I}' has not find!" )
             else :
                 Ret += I
             i += 1
