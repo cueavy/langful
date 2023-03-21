@@ -39,7 +39,7 @@ print( Text.language_dict )
 print( Text.replace( "%hi%\n%%\n%welcome%" ) )
 ```
 
-# Output
+## Output
 
 ```python
 {'en_us': {'welcome': 'Welcom', 'hi': 'Hi'}, 'zh_cn': {'welcome': '欢迎', 'hi': '你好'}}
