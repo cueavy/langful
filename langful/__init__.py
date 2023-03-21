@@ -3,7 +3,7 @@
 
 ---
 
-Help developers localize
+Help developers to localize
 
 ---
 
