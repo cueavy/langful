@@ -1,6 +1,6 @@
 # langful
 
-⚠ Warning : Under development ⚠
+Help developers to localize
 
 # example
 
@@ -36,7 +36,7 @@ Text = langful.lang()
 
 print( Text.language_dict )
 
-print( Text.replace( "%hi%\n%%\n%welcome%" ) )
+print( Text.replace( "%hi%\n%welcome%\n%%" ) )
 ```
 
 ## Output
@@ -44,8 +44,8 @@ print( Text.replace( "%hi%\n%%\n%welcome%" ) )
 ```python
 {'en_us': {'welcome': 'Welcom', 'hi': 'Hi'}, 'zh_cn': {'welcome': '欢迎', 'hi': '你好'}}
 Hi
-%
 Welcome
+%
 ```
 
 or
@@ -53,8 +53,8 @@ or
 ```python
 {'en_us': {'welcome': 'Welcom', 'hi': 'Hi'}, 'zh_cn': {'welcome': '欢迎', 'hi': '你好'}}
 你好
-%
 欢迎
+%
 ```
 
 # About

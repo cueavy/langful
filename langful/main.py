@@ -37,13 +37,15 @@ class lang :
             lang_file = default_lang + ".json"
 
         lang_file_list = []
+        lang_str_list = []
         language_dict = {}
 
         for filename in os.listdir(lang_dir): # 尝试加载所有能加载的模块
             if len( filename ) > 5 and filename[-5:] == ".json" :
                 try :
-                    with open( os.path.join( lang_dir , filename ) , encoding= "utf-8" ) as file :
-                        language_dict[filename[:-5]] = json.load(file)
+                    with open( os.path.join( lang_dir , filename ) , encoding = "utf-8" ) as file :
+                        language_dict[ filename[ :-5 ] ] = json.load( file )
+                    lang_str_list.append( filename[ :-5 ] )
                     lang_file_list.append( filename )
                 except : pass
 
@@ -59,6 +61,9 @@ class lang :
         # lang_file_list: All can find's language file
         # lang_file_list: 所有能找到的语言文件
         self.lang_file_list = lang_file_list
+        # lang_str_list: All can find's language file's name
+        # lang_str_list: 所有能找到的语言文件的名字
+        self.lang_str_list = lang_str_list
         # language_dict: Load all can read's language file
         # language_dict: 加载所有可以读取的语言文件
         self.language_dict = language_dict
@@ -72,22 +77,111 @@ class lang :
         # use_locale: 选定的语言
         self.use_locale = use_locale
 
-    def get( self , key:str , language:dict = None ) : # 输入键 获取对应的值
-        if not language : language = self.language
-        if key in language :
-            return language[key]
-        else:
-            if key in self.language_dict[ self.default_lang ] :
-                return language[key]
-            else:
-                raise KeyError( f"Key '{key}' has not in this dictionary!" )
+    def get( self , key:str , lang_str:str = None ) : # 输入键 获取对应的值
+        """
 
-    def set( self , name:str , value:str , language:dict = None ) :
-        if not language : language = self.language
-        language[ name ] = value
+        # get
 
-    def replace( self , *args:str , language:dict = None ) :
-        if not language : language = self.language
+        Get one value in some one dictionary
+
+        在某个字典中获取一个值
+
+        ---
+
+        key: The dictionary's key
+
+        lang_str: Such as 'zh_cn' or 'en_us' and more
+
+        ---
+
+        key: 键值
+
+        lang_str: 例如 'zh_cn' 或 'en_us' 等等
+
+        """
+        if not lang_str :
+            lang_str = self.use_locale
+
+        if lang_str in self.lang_str_list :
+            if key in self.language_dict[ lang_str ] :
+                return self.language_dict[ lang_str ] [ key ]
+            else :
+                raise KeyError( f"Key '{key}' has not in dictionary!" )
+        else :
+            raise KeyError( f"Lang '{lang_str}' has not find!" )
+
+    def set( self , key:str , value:str , lang_str:str = None ) : # 设置某个键值
+        """
+
+        Set one value with one key in some one dictionary
+
+        在某个字典中用一个值来设置一个键
+
+        # set
+
+        ---
+
+        key: The dictionary's key
+
+        value: Need to change's value
+
+        lang_str: Such as 'zh_cn' or 'en_us' and more
+
+        ---
+
+        key: 键值
+
+        value: 需要更改的值
+
+        lang_str: 例如 'zh_cn' 或 'en_us' 等等
+        
+        """
+        if not lang_str :
+            lang_str = self.use_locale
+
+        if lang_str in self.lang_str_list :
+            self.language_dict[ lang_str ] [ key ] =  value
+        else :
+            raise KeyError( f"Lang '{lang_str}' has not find!" )
+
+        if lang_str == self.use_locale :
+            self.language = self.language_dict[ lang_str ]
+            
+
+    def replace( self , *args:str , lang_str:str = None ) : # 替换字符串 使用%号
+        """
+
+        Replace string with some one dictionary
+
+        用某个字典替换字符串
+
+        # replace
+
+        ---
+
+        key: The dictionary's key
+
+        args: Strings
+
+        lang_str: Such as 'zh_cn' or 'en_us' and more
+
+        ---
+
+        key: 键值
+
+        args: Strings
+
+        lang_str: 例如 'zh_cn' 或 'en_us' 等等
+        
+        """
+        if not lang_str :
+            lang_str = self.use_locale
+
+        if lang_str in self.lang_str_list :
+            language = self.language_dict[ lang_str ]
+        else :
+            raise KeyError( f"Lang '{lang_str}' has not find!" )
+        
         text = "".join(args)
         i = 0
         Ret = ""
