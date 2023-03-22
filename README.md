@@ -21,6 +21,8 @@
         <img alt="Github issues" src="https://img.shields.io/github/issues/cueavyqwp/langful?color=blue">
     </a>
 
+</p>
+
 <md align="center">
 
 *Help developers to localize*
