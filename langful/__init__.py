@@ -66,8 +66,5 @@ pypi: https://pypi.org/project/langful
 
 issues: https://github.com/cueavyqwp/langful/issues
 """
-import locale
-import json
-import os
 
 from langful.main import *

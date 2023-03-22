@@ -1,10 +1,12 @@
+import locale
+import json
+import os
+
 from langful.__init__ import *
 
 class lang :
 
-    global os , locale , json
-
-    def __init__( self , lang_dir : str = "lang" , default_lang : str = "en_us"  ) :
+    def __init__( self , lang_dir : str = "lang" , default_lang : str = "en_us" , file_suffix : str = ".json" ) :
         """
         # lang object
 
@@ -14,34 +16,39 @@ class lang :
 
         default_lang: Default translation
 
+        file_suffix: Such as '.json' '.lang' '.txt' and more
+
         ---
 
         lang_dir: 翻译文件的存放目录
 
         default_lang: 默认使用的翻译
+
+        file_suffix: 文件后缀 例如 '.json' '.lang' '.txt' 等等
+
         """
         if not os.path.exists( lang_dir ) : # 判断lang文件夹是否存在
             raise KeyError( f"'{lang_dir}' dir not find" )
         
         if not len( os.listdir(lang_dir) ) : raise RuntimeError( f"In '{lang_dir}' dir has no lang file!" ) # lang文件夹里没有语言文件
 
-        if not os.path.exists( os.path.join( lang_dir , default_lang + ".json" ) ) : # 判断default_lang文件是否存在
+        if not os.path.exists( os.path.join( lang_dir , default_lang + file_suffix ) ) : # 判断default_lang文件是否存在
             raise KeyError( f"'{default_lang}' not find" )
         
         default_locale = locale.getdefaultlocale()[0].lower() # 默认语言
-        lang_file = os.path.join( lang_dir , default_locale + ".json" )
+        lang_file = os.path.join( lang_dir , default_locale + file_suffix )
 
         use_locale = default_locale
         if not os.path.exists( lang_file ) : # 若默认语言不存在对应的本地化 那么就选用默认语言文件
             use_locale = default_lang
-            lang_file = default_lang + ".json"
+            lang_file = default_lang + file_suffix
 
         lang_file_list = []
         lang_str_list = []
         language_dict = {}
 
         for filename in os.listdir(lang_dir): # 尝试加载所有能加载的模块
-            if len( filename ) > 5 and filename[-5:] == ".json" :
+            if len( filename ) > 5 and filename[-5:] == file_suffix :
                 try :
                     with open( os.path.join( lang_dir , filename ) , encoding = "utf-8" ) as file :
                         language_dict[ filename[ :-5 ] ] = json.load( file )
@@ -55,6 +62,9 @@ class lang :
         #default_lang: Default translation
         #default_lang: 默认使用的翻译
         self.default_lang = default_lang
+        #file_suffix: Such as '.json' '.lang' '.txt' and more
+        #file_suffix: 文件后缀 例如 '.json' '.lang' '.txt' 等等
+        self.file_suffix = file_suffix
         # lang_file: Choose to use's language file
         # lang_file: 选择使用的语言文件
         self.lang_file = lang_file
