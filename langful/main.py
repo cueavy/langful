@@ -47,12 +47,14 @@ class lang :
         lang_str_list = []
         language_dict = {}
 
+        file_suffix_len=len(file_suffix)
+
         for filename in os.listdir(lang_dir): # 尝试加载所有能加载的模块
-            if len( filename ) > 5 and filename[-5:] == file_suffix :
+            if len( filename ) > file_suffix_len and filename[-file_suffix_len:] == file_suffix :
                 try :
                     with open( os.path.join( lang_dir , filename ) , encoding = "utf-8" ) as file :
-                        language_dict[ filename[ :-5 ] ] = json.load( file )
-                    lang_str_list.append( filename[ :-5 ] )
+                        language_dict[ filename[ :-file_suffix_len ] ] = json.load( file )
+                    lang_str_list.append( filename[ :-file_suffix_len ] )
                     lang_file_list.append( filename )
                 except : pass
 

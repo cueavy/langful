@@ -1,8 +1,4 @@
-<md align="center">
-
 # langful
-
-</md>
 
 <p align="center">
     <a href="https://pypi.org/project/langful">
@@ -23,11 +19,7 @@
 
 </p>
 
-<md align="center">
-
 *Help developers to localize*
-
-</md>
 
 ---
 
