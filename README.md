@@ -21,10 +21,6 @@
 
 ---
 
-*Help developers to localize*
-
----
-
 # example
 
 - test.py
@@ -59,25 +55,43 @@ Text = langful.lang()
 
 print( Text.language_dict )
 
-print( Text.replace( "%hi%\n%welcome%\n%%" ) )
+print( Text.replace( "%hi%" , lang_str = "zh_cn" ) )
+
+print( Text.replace( "!hi!" , lang_str = "zh_cn" , change = "!" ) )
+
+print( Text.replace( "%welcome%" , lang_str = "zh_cn" ) )
+
+print( Text.replace( "!welcome!" , lang_str = "zh_cn" , change = "!" ) )
+
+print( Text.replace( "%hi%" , lang_str = "en_us" ) )
+
+print( Text.replace( "!hi!" , lang_str = "en_us" , change = "!" ) )
+
+print( Text.replace( "%welcome%" , lang_str = "en_us" ) )
+
+print( Text.replace( "!welcome!" , lang_str = "en_us" , change = "!" ) )
+
+print( )
+
+print( Text.replace( "%%" ) )
+print( Text.replace( "!!" , change = "!" ) )
 ```
 
 ## Output
 
 ```python
-{'en_us': {'welcome': 'Welcom', 'hi': 'Hi'}, 'zh_cn': {'welcome': '欢迎', 'hi': '你好'}}
-Hi
-Welcome
-%
-```
-
-or
-
-```python
-{'en_us': {'welcome': 'Welcom', 'hi': 'Hi'}, 'zh_cn': {'welcome': '欢迎', 'hi': '你好'}}
+{'en_us': {'welcome': 'Welcome', 'hi': 'Hi'}, 'zh_cn': {'welcome': '欢迎', 'hi': '你好'}}
+你好
 你好
 欢迎
+欢迎
+Hi
+Hi
+Welcome
+Welcome
+
 %
+!
 ```
 
 # About

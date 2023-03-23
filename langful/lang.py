@@ -6,7 +6,7 @@ from langful.__init__ import *
 
 class lang :
 
-    def __init__( self , lang_dir : str = "lang" , default_lang : str = "en_us" , file_suffix : str = ".json" ) :
+    def __init__( self , lang_dir : str = "lang" , default_lang : str = "en_us" , file_suffix : str = ".json" , change : str = "%" ) :
         """
         # lang object
 
@@ -18,6 +18,8 @@ class lang :
 
         file_suffix: Such as '.json' '.lang' '.txt' and more
 
+        change: Specifies what character to use for substitution , default is '%'
+
         ---
 
         lang_dir: 翻译文件的存放目录
@@ -25,6 +27,8 @@ class lang :
         default_lang: 默认使用的翻译
 
         file_suffix: 文件后缀 例如 '.json' '.lang' '.txt' 等等
+
+        change: 选择用什么符号做替换 默认为'%'
 
         """
         if not os.path.exists( lang_dir ) : # 判断lang文件夹是否存在
@@ -88,6 +92,9 @@ class lang :
         # use_locale: The selected language
         # use_locale: 选定的语言
         self.use_locale = use_locale
+        # change: Specifies what character to use for substitution , default is '%'
+        # change: 选择用什么符号做替换 默认为'%'
+        self.change = change
 
     def get( self , key:str , lang_str:str = None ) : # 输入键 获取对应的值
         """
@@ -160,7 +167,7 @@ class lang :
             self.language = self.language_dict[ lang_str ]
             
 
-    def replace( self , *args:str , lang_str:str = None ) : # 替换字符串 使用%号
+    def replace( self , * args : str , lang_str : str = None , change : str = None ) : # 替换字符串 使用%号
         """
 
         Replace string with some one dictionary
@@ -176,6 +183,8 @@ class lang :
         args: Strings
 
         lang_str: Such as 'zh_cn' or 'en_us' and more
+    
+        change: Specifies what character to use for substitution , default is '%'
 
         ---
 
@@ -184,8 +193,12 @@ class lang :
         args: Strings
 
         lang_str: 例如 'zh_cn' 或 'en_us' 等等
-        
+
+        change: 选择用什么符号做替换 默认为'%'
         """
+        if not change :
+            change = self.change
+
         if not lang_str :
             lang_str = self.use_locale
 
@@ -197,12 +210,12 @@ class lang :
         text = "".join(args)
         i = 0
         Ret = ""
-        for I in text.split( "%" ) :
+        for I in text.split( change ) :
             if i % 2 :
                 if I in language :
                     Ret += language[I]
                 elif not I :
-                    Ret += "%"
+                    Ret += change
                 else:
                     raise KeyError( f"Key '{I}' has not find!" )
             else :
