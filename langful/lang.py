@@ -166,7 +166,6 @@ class lang :
         if lang_str == self.use_locale :
             self.language = self.language_dict[ lang_str ]
             
-
     def replace( self , * args : str , lang_str : str = None , change : str = None ) : # 替换字符串 使用%号
         """
 
