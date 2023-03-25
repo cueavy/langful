@@ -1,4 +1,4 @@
-import langful.__init__
+from langful.__init__ import *
 
 def if_then( args : str = "" , replace_list : list or str = "" , change : str = "%" , else_replace : str = "" ) -> str :
     """
