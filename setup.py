@@ -3,7 +3,7 @@ with open( "README.md" , "r" , encoding = "utf-8" ) as fh :
     long_description = fh.read()
 setuptools.setup(
     name="langful" , # 模块名称
-    version="0.19" , # 当前版本
+    version="0.2" , # 当前版本
     author="cueavyqwp" , # 作者
     author_email="cueavyqwp@outlook.com" , # 作者邮箱
     description="", # 模块简介
@@ -24,7 +24,7 @@ setuptools.setup(
 )
 # 删除文件夹 build 和 langful.egg-info
 # 检查setuptools更新 python -m pip install --user --upgrade setuptools wheel
-# 生成whl文件 python setup.py bdist_wheel --universal
 # 安装模块 pip install twine
+# 生成whl文件 python setup.py bdist_wheel --universal
 # 上传whl文件 twine upload dist/*
 # 安装模块 pip install langful

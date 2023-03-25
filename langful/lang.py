@@ -6,7 +6,7 @@ from langful.__init__ import *
 
 class lang :
 
-    def __init__( self , lang_dir : str = "lang" , default_lang : str = "en_us" , file_suffix : str = ".json" , change : str = "%" ) :
+    def __init__( self , lang_dir : str = "lang" , default_lang : str = "en_us" , file_suffix : str = ".json" , change : str = "%" ) -> None :
         """
         # lang object
 
@@ -94,7 +94,7 @@ class lang :
         # change: 选择用什么符号做替换 默认为'%'
         self.change = change
 
-    def get( self , key:str , lang_str:str = None ) : # 输入键 获取对应的值
+    def get( self , key:str , lang_str:str = None ) -> str : # 输入键 获取对应的值
         """
 
         # get
@@ -128,7 +128,7 @@ class lang :
         else :
             raise KeyError( f"Lang '{lang_str}' has not find!" )
 
-    def set( self , key:str , value:str , lang_str:str = None ) : # 设置某个键值
+    def set( self , key:str , value:str , lang_str:str = None ) -> None : # 设置某个键值
         """
 
         Set one value with one key in some one dictionary
@@ -166,7 +166,7 @@ class lang :
         if lang_str == self.use_locale :
             self.language = self.language_dict[ lang_str ]
             
-    def replace( self , * args : str , lang_str : str = None , change : str = None ) : # 替换字符串 使用%号
+    def replace( self , * args : str , lang_str : str = None , change : str = None ) -> str : # 替换字符串 使用%号
         """
 
         Replace string with some one dictionary
@@ -206,10 +206,11 @@ class lang :
 
         else :
             raise KeyError( f"Lang '{lang_str}' has not find!" )
-        
+
         i = 0
         Ret = ""
-        for I in "".join( args ).split( change ) :
+        text = "".join( args ).split( change )
+        for I in text :
 
             if i % 2 :
                 if I in language : Ret += language[I]

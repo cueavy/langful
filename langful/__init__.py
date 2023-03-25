@@ -85,4 +85,7 @@ pypi: https://pypi.org/project/langful
 issues: https://github.com/cueavyqwp/langful/issues
 """
 
+# 'lang' object
 from langful.lang import *
+# Some functions for 'langful'
+from langful.functions import *
