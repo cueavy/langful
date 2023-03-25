@@ -16,7 +16,7 @@ class lang :
 
         default_lang: Default translation
 
-        file_suffix: Such as '.json' '.lang' '.txt' and more
+        file_suffix: Such as '.json' or '.lang'
 
         change: Specifies what character to use for substitution , default is '%'
 
@@ -41,17 +41,15 @@ class lang :
         
         default_locale = locale.getdefaultlocale()[0].lower() # 默认语言
         lang_file = os.path.join( lang_dir , default_locale + file_suffix )
+        file_suffix_len=len(file_suffix)
+        lang_file_list = []
+        lang_str_list = []
+        language_dict = {}
 
         use_locale = default_locale
         if not os.path.exists( lang_file ) : # 若默认语言不存在对应的本地化 那么就选用默认语言文件
             use_locale = default_lang
             lang_file = default_lang + file_suffix
-
-        lang_file_list = []
-        lang_str_list = []
-        language_dict = {}
-
-        file_suffix_len=len(file_suffix)
 
         for filename in os.listdir(lang_dir): # 尝试加载所有能加载的模块
             if len( filename ) > file_suffix_len and filename[-file_suffix_len:] == file_suffix :
@@ -126,6 +124,7 @@ class lang :
                 return self.language_dict[ lang_str ] [ key ]
             else :
                 raise KeyError( f"Key '{key}' has not in dictionary!" )
+            
         else :
             raise KeyError( f"Lang '{lang_str}' has not find!" )
 
@@ -160,6 +159,7 @@ class lang :
 
         if lang_str in self.lang_str_list :
             self.language_dict[ lang_str ] [ key ] =  value
+
         else :
             raise KeyError( f"Lang '{lang_str}' has not find!" )
 
@@ -203,21 +203,22 @@ class lang :
 
         if lang_str in self.lang_str_list :
             language = self.language_dict[ lang_str ]
+
         else :
             raise KeyError( f"Lang '{lang_str}' has not find!" )
         
-        text = "".join(args)
         i = 0
         Ret = ""
-        for I in text.split( change ) :
+        for I in "".join( args ).split( change ) :
+
             if i % 2 :
-                if I in language :
-                    Ret += language[I]
-                elif not I :
-                    Ret += change
-                else:
-                    raise KeyError( f"Key '{I}' has not find!" )
-            else :
-                Ret += I
+                if I in language : Ret += language[I]
+
+                elif not I : Ret += change
+
+                else : raise KeyError( f"Key '{I}' has not find!" )
+            else : Ret += I
+
             i += 1
+            
         return Ret
