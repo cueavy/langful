@@ -40,6 +40,7 @@ class lang :
             raise KeyError( f"'{default_lang}' not find" )
         
         default_locale = locale.getdefaultlocale()[0].lower() # 默认语言
+        
         lang_file = os.path.join( lang_dir , default_locale + file_suffix )
         file_suffix_len=len(file_suffix)
         lang_file_list = []
