@@ -154,7 +154,7 @@ class lang :
         value: 需要更改的值
 
         lang_str: 例如 'zh_cn' 或 'en_us' 等等
-        
+
         """
         if not lang_str :
             lang_str = self.use_locale
@@ -167,7 +167,7 @@ class lang :
 
         if lang_str == self.use_locale :
             self.language = self.language_dict[ lang_str ]
-            
+
     def replace( self , * args : str , lang_str : str = None , change : str = None ) -> str : # 替换字符串 使用%号
         """
 
