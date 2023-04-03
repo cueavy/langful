@@ -3,6 +3,7 @@ import json
 import os
 
 from langful.__init__ import *
+from langful.define import *
 
 class lang :
 
@@ -11,7 +12,7 @@ class lang :
         # lang object
 
         ---
-        
+
         lang_dir: Translation file storage directory
 
         default_lang: Default translation
@@ -33,14 +34,14 @@ class lang :
         """
         if not os.path.exists( lang_dir ) : # 判断lang文件夹是否存在
             raise KeyError( f"'{lang_dir}' dir not find" )
-        
+
         if not len( os.listdir(lang_dir) ) : raise RuntimeError( f"In '{lang_dir}' dir has no lang file!" ) # lang文件夹里没有语言文件
 
         if not os.path.exists( os.path.join( lang_dir , default_lang + file_suffix ) ) : # 判断default_lang文件是否存在
             raise KeyError( f"'{default_lang}' not find" )
-        
+
         default_locale = locale.getdefaultlocale()[0].lower() # 默认语言
-        
+
         lang_file = os.path.join( lang_dir , default_locale + file_suffix )
         file_suffix_len=len(file_suffix)
         lang_file_list = []
@@ -183,7 +184,7 @@ class lang :
         args: Strings
 
         lang_str: Such as 'zh_cn' or 'en_us' and more
-    
+
         change: Specifies what character to use for substitution , default is '%'
 
         ---
@@ -222,5 +223,5 @@ class lang :
             else : Ret += I
 
             i += 1
-            
+
         return Ret
