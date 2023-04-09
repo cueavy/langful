@@ -13,7 +13,7 @@ class lang :
 
         ---
 
-        lang_dir: Translation file storage directory
+        lang_dir: Translation file storage directory / Translation file dictionary
 
         default_lang: Default translation
 
@@ -23,7 +23,7 @@ class lang :
 
         ---
 
-        lang_dir: 翻译文件的存放目录
+        lang_dir: 翻译文件的存放目录 / 翻译文件字典
 
         default_lang: 默认使用的翻译
 
@@ -34,30 +34,24 @@ class lang :
         """
 
         default_locale = locale.getdefaultlocale()[0].lower() # 默认语言
+        self.type = get_type( lang_dir )
 
-        if isinstance( lang_dir , str ) :
+        if self.type == FILE :
             if not os.path.exists( lang_dir ) : # 判断lang文件夹是否存在
                 raise KeyError( f"'{lang_dir}' dir not find" )
-            
             if not len( os.listdir(lang_dir) ) :
                 raise RuntimeError( f"In '{lang_dir}' dir has no lang file!" ) # lang文件夹里没有语言文件
-            
             if not os.path.exists( os.path.join( lang_dir , default_lang + file_suffix ) ) : # 判断default_lang文件是否存在
                 raise KeyError( f"'{default_lang}' not find" )
-            
-            self.type = FILE
-
             lang_file = os.path.join( lang_dir , default_locale + file_suffix )
             file_suffix_len=len(file_suffix)
             lang_file_list = []
             lang_str_list = []
             language_dict = {}
-
             use_locale = default_locale
             if not os.path.exists( lang_file ) : # 若默认语言不存在对应的本地化 那么就选用默认语言文件
                 use_locale = default_lang
                 lang_file = default_lang + file_suffix
-
             for filename in os.listdir(lang_dir): # 尝试加载所有能加载的模块
                 if len( filename ) > file_suffix_len and filename[-file_suffix_len:] == file_suffix :
                     try :
@@ -67,17 +61,14 @@ class lang :
                         lang_file_list.append( filename )
                     except : pass
 
-        elif isinstance( lang_dir , dict ) :
+        elif self.type == DICT :
             if default_lang not in lang_dir :
                 raise KeyError( f"'{default_lang}' not find" )
-            
-            self.type = DICT
-
             if default_locale not in lang_dir :
                 use_locale = default_lang
-
             language_dict = lang_dir
             lang_str_list = list( lang_dir.keys() )
+
         else :
             raise TypeError(f"lang_dir can't use type {type(lang_dir)}")
 
@@ -152,7 +143,7 @@ class lang :
         else :
             raise KeyError( f"Lang '{lang_str}' has not find!" )
 
-    def set( self , key:str , value:str , lang_str:str = None ) -> None : # 设置某个键值
+    def set( self , key : str , value : str , lang_str : str = None ) -> None : # 设置某个键值
         """
 
         Set one value with one key in some one dictionary
@@ -189,6 +180,9 @@ class lang :
 
         if lang_str == self.use_locale :
             self.language = self.language_dict[ lang_str ]
+
+    def add( self , lang_str : str ) -> None : #todo
+        pass
 
     def replace( self , * args : str , lang_str : str = None , change : str = None ) -> str : # 替换字符串 使用%号
         """
