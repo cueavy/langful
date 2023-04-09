@@ -7,7 +7,7 @@ from langful.define import *
 
 class lang :
 
-    def __init__( self , lang_dir : str = "lang" , default_lang : str = "en_us" , file_suffix : str = ".json" , change : str = "%" ) -> None :
+    def __init__( self , lang_dir = "lang" , default_lang : str = "en_us" , file_suffix : str = ".json" , change : str = "%" ) -> None :
         """
         # lang object
 
@@ -32,35 +32,54 @@ class lang :
         change: 选择用什么符号做替换 默认为'%'
 
         """
-        if not os.path.exists( lang_dir ) : # 判断lang文件夹是否存在
-            raise KeyError( f"'{lang_dir}' dir not find" )
-
-        if not len( os.listdir(lang_dir) ) : raise RuntimeError( f"In '{lang_dir}' dir has no lang file!" ) # lang文件夹里没有语言文件
-
-        if not os.path.exists( os.path.join( lang_dir , default_lang + file_suffix ) ) : # 判断default_lang文件是否存在
-            raise KeyError( f"'{default_lang}' not find" )
 
         default_locale = locale.getdefaultlocale()[0].lower() # 默认语言
 
-        lang_file = os.path.join( lang_dir , default_locale + file_suffix )
-        file_suffix_len=len(file_suffix)
-        lang_file_list = []
-        lang_str_list = []
-        language_dict = {}
+        if isinstance( lang_dir , str ) :
+            if not os.path.exists( lang_dir ) : # 判断lang文件夹是否存在
+                raise KeyError( f"'{lang_dir}' dir not find" )
+            
+            if not len( os.listdir(lang_dir) ) :
+                raise RuntimeError( f"In '{lang_dir}' dir has no lang file!" ) # lang文件夹里没有语言文件
+            
+            if not os.path.exists( os.path.join( lang_dir , default_lang + file_suffix ) ) : # 判断default_lang文件是否存在
+                raise KeyError( f"'{default_lang}' not find" )
+            
+            self.type = FILE
 
-        use_locale = default_locale
-        if not os.path.exists( lang_file ) : # 若默认语言不存在对应的本地化 那么就选用默认语言文件
-            use_locale = default_lang
-            lang_file = default_lang + file_suffix
+            lang_file = os.path.join( lang_dir , default_locale + file_suffix )
+            file_suffix_len=len(file_suffix)
+            lang_file_list = []
+            lang_str_list = []
+            language_dict = {}
 
-        for filename in os.listdir(lang_dir): # 尝试加载所有能加载的模块
-            if len( filename ) > file_suffix_len and filename[-file_suffix_len:] == file_suffix :
-                try :
-                    with open( os.path.join( lang_dir , filename ) , encoding = "utf-8" ) as file :
-                        language_dict[ filename[ :-file_suffix_len ] ] = json.load( file )
-                    lang_str_list.append( filename[ :-file_suffix_len ] )
-                    lang_file_list.append( filename )
-                except : pass
+            use_locale = default_locale
+            if not os.path.exists( lang_file ) : # 若默认语言不存在对应的本地化 那么就选用默认语言文件
+                use_locale = default_lang
+                lang_file = default_lang + file_suffix
+
+            for filename in os.listdir(lang_dir): # 尝试加载所有能加载的模块
+                if len( filename ) > file_suffix_len and filename[-file_suffix_len:] == file_suffix :
+                    try :
+                        with open( os.path.join( lang_dir , filename ) , encoding = "utf-8" ) as file :
+                            language_dict[ filename[ :-file_suffix_len ] ] = json.load( file )
+                        lang_str_list.append( filename[ :-file_suffix_len ] )
+                        lang_file_list.append( filename )
+                    except : pass
+
+        elif isinstance( lang_dir , dict ) :
+            if default_lang not in lang_dir :
+                raise KeyError( f"'{default_lang}' not find" )
+            
+            self.type = DICT
+
+            if default_locale not in lang_dir :
+                use_locale = default_lang
+
+            language_dict = lang_dir
+            lang_str_list = list( lang_dir.keys() )
+        else :
+            raise TypeError(f"lang_dir can't use type {type(lang_dir)}")
 
         #lang_dir: Translation file storage directory
         #lang_dir: 翻译文件的存放目录
@@ -70,13 +89,16 @@ class lang :
         self.default_lang = default_lang
         #file_suffix: Such as '.json' '.lang' '.txt' and more
         #file_suffix: 文件后缀 例如 '.json' '.lang' '.txt' 等等
-        self.file_suffix = file_suffix
+        if self.type == FILE :
+            self.file_suffix = file_suffix
         # lang_file: Choose to use's language file
         # lang_file: 选择使用的语言文件
-        self.lang_file = lang_file
+        if self.type == FILE :
+            self.lang_file = lang_file
         # lang_file_list: All can find's language file
         # lang_file_list: 所有能找到的语言文件
-        self.lang_file_list = lang_file_list
+        if self.type == FILE :
+            self.lang_file_list = lang_file_list
         # lang_str_list: All can find's language file's name
         # lang_str_list: 所有能找到的语言文件的名字
         self.lang_str_list = lang_str_list
@@ -160,7 +182,7 @@ class lang :
             lang_str = self.use_locale
 
         if lang_str in self.lang_str_list :
-            self.language_dict[ lang_str ] [ key ] =  value
+            self.language_dict[ lang_str ] [ key ] = value
 
         else :
             raise KeyError( f"Lang '{lang_str}' has not find!" )
