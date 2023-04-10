@@ -3,3 +3,4 @@
 langful.egg-info/
 build/
 /langful/__pycache__/
+.vscode/
