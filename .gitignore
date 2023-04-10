@@ -1,6 +1,6 @@
 /lang
 /test.py
-langful.egg-info/
-build/
-/langful/__pycache__/
-.vscode/
+/langful.egg-info
+/build
+/langful/__pycache__
+/.vscode
