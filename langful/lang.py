@@ -40,7 +40,7 @@ class lang :
             if not os.path.exists( lang_dir ) : # 判断lang文件夹是否存在
                 raise KeyError( f"'{lang_dir}' dir not find" )
             if not len( os.listdir(lang_dir) ) :
-                raise RuntimeError( f"In '{lang_dir}' dir has no lang file!" ) # lang文件夹里没有语言文件
+                raise RuntimeError( f"'{lang_dir}' has no file!" ) # lang文件夹里没有语言文件
             if not os.path.exists( os.path.join( lang_dir , default_lang + file_suffix ) ) : # 判断default_lang文件是否存在
                 raise KeyError( f"'{default_lang}' not find" )
             lang_file = os.path.join( lang_dir , default_locale + file_suffix )
@@ -78,20 +78,6 @@ class lang :
         #default_lang: Default translation
         #default_lang: 默认使用的翻译
         self.default_lang = default_lang
-        #file_suffix: Such as '.json' '.lang' '.txt' and more
-        #file_suffix: 文件后缀 例如 '.json' '.lang' '.txt' 等等
-        if self.type == FILE :
-            self.file_suffix = file_suffix
-        # lang_file: Choose to use's language file
-        # lang_file: 选择使用的语言文件
-        if self.type == FILE :
-            self.lang_file = lang_file
-        # lang_file_list: All can find's language file
-        # lang_file_list: 所有能找到的语言文件
-        if self.type == FILE :
-            self.lang_file_list = lang_file_list
-        # lang_str_list: All can find's language file's name
-        # lang_str_list: 所有能找到的语言文件的名字
         self.lang_str_list = lang_str_list
         # language_dict: Load all can read's language file
         # language_dict: 加载所有可以读取的语言文件
@@ -108,6 +94,19 @@ class lang :
         # change: Specifies what character to use for substitution , default is '%'
         # change: 选择用什么符号做替换 默认为'%'
         self.change = change
+
+        if self.type == FILE :
+            #file_suffix: Such as '.json' '.lang' '.txt' and more
+            #file_suffix: 文件后缀 例如 '.json' '.lang' '.txt' 等等
+            self.file_suffix = file_suffix
+            # lang_file: Choose to use's language file
+            # lang_file: 选择使用的语言文件
+            self.lang_file = lang_file
+            # lang_file_list: All can find's language file
+            # lang_file_list: 所有能找到的语言文件
+            self.lang_file_list = lang_file_list
+            # lang_str_list: All can find's language file's name
+            # lang_str_list: 所有能找到的语言文件的名字
 
     def get( self , key:str , lang_str:str = None ) -> str : # 输入键 获取对应的值
         """
@@ -138,10 +137,10 @@ class lang :
             if key in self.language_dict[ lang_str ] :
                 return self.language_dict[ lang_str ] [ key ]
             else :
-                raise KeyError( f"Key '{key}' has not in dictionary!" )
+                raise KeyError( f"key '{key}' has not in dictionary!" )
             
         else :
-            raise KeyError( f"Lang '{lang_str}' has not find!" )
+            raise KeyError( f"lang '{lang_str}' has not find!" )
 
     def set( self , key : str , value : str , lang_str : str = None ) -> None : # 设置某个键值
         """
@@ -176,7 +175,7 @@ class lang :
             self.language_dict[ lang_str ] [ key ] = value
 
         else :
-            raise KeyError( f"Lang '{lang_str}' has not find!" )
+            raise KeyError( f"lang '{lang_str}' has not find!" )
 
         if lang_str == self.use_locale :
             self.language = self.language_dict[ lang_str ]
@@ -223,21 +222,22 @@ class lang :
             language = self.language_dict[ lang_str ]
 
         else :
-            raise KeyError( f"Lang '{lang_str}' has not find!" )
+            raise KeyError( f"lang '{lang_str}' has not find!" )
 
         i = 0
         Ret = ""
         text = "".join( args ).split( change )
+
         for I in text :
-
             if i % 2 :
-                if I in language : Ret += language[I]
-
-                elif not I : Ret += change
-
-                else : raise KeyError( f"Key '{I}' has not find!" )
-            else : Ret += I
-
+                if I in language :
+                    Ret += language[I]
+                elif not I :
+                    Ret += change
+                else :
+                    raise KeyError( f"key '{I}' has not find!" )
+            else :
+                Ret += I
             i += 1
 
         return Ret
