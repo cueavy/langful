@@ -183,6 +183,9 @@ class lang :
     def add( self , lang_str : str ) -> None : #todo
         pass
 
+    def remove( self , lang_str : str ) -> None : #todo
+        pass
+
     def replace( self , * args : str , lang_str : str = None , change : str = None ) -> str : # 替换字符串 使用%号
         """
 
