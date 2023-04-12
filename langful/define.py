@@ -1,10 +1,12 @@
 FILE = "file"
 DICT = "dict"
 
-def get_type( obj ) :
+def TheTypeError( obj , message : str = "" ) -> None : raise TypeError(f"{ message }can't use type { type( obj ) }")
+
+def get_type( obj ) -> str :
     if isinstance( obj , str ) :
         return FILE
     elif isinstance( obj , dict ) :
         return DICT
     else :
-        raise TypeError(f"can't use type {type(obj)}")
+        TheTypeError( obj )

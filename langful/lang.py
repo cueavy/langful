@@ -70,7 +70,7 @@ class lang :
             lang_str_list = list( lang_dir.keys() )
 
         else :
-            raise TypeError(f"lang_dir can't use type {type(lang_dir)}")
+            TheTypeError( lang_dir )
 
         #lang_dir: Translation file storage directory
         #lang_dir: 翻译文件的存放目录
@@ -180,11 +180,21 @@ class lang :
         if lang_str == self.use_locale :
             self.language = self.language_dict[ lang_str ]
 
-    def add( self , lang_str : str ) -> None : #todo
-        pass
+    def add( self , lang_str : str , set : dict = {} ) -> None : #todo
+        if self.type == DICT :
+            pass
+        elif self.type == FILE :
+            pass
+        else :
+            TheTypeError( lang_str )
 
     def remove( self , lang_str : str ) -> None : #todo
-        pass
+        if self.type == DICT :
+            pass
+        elif self.type == FILE :
+            pass
+        else :
+            TheTypeError( lang_str )
 
     def replace( self , * args : str , lang_str : str = None , change : str = None ) -> str : # 替换字符串 使用%号
         """
