@@ -1,7 +1,7 @@
 """
 # langful
 
-Help developers to localize
+Help developers to localization
 
 # example
 
