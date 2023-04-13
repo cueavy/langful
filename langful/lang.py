@@ -218,6 +218,7 @@ class lang :
             raise RuntimeError( f"can't remove '{lang_str}' " )
         del self.language_dict[ lang_str ]
         del self.lang_str_list[ self.lang_str_list.index( lang_str ) ]
+        self._reload()
 
     def replace( self , * args : str , lang_str : str = None , change : str = None ) -> str : # 替换字符串 使用%号
         """
