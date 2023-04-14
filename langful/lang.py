@@ -114,6 +114,14 @@ class lang :
         self._lang_str_list_reload()
         self._language_reload()
 
+    def _lang_str_to_language( self , lang_str ) :
+        if not lang_str :
+            lang_str = self.use_locale
+        if lang_str in self.lang_str_list :
+            return self.language_dict[ lang_str ]
+        else :
+            raise KeyError( f"lang '{lang_str}' has not find!" )
+
     def get( self , key:str , lang_str:str = None ) -> str : # 输入键 获取对应的值
         """
 
@@ -183,7 +191,7 @@ class lang :
         else :
             raise KeyError( f"lang '{lang_str}' has not find!" )
 
-    def add( self , lang_str : str , set : dict = {} ) -> None :
+    def add( self , lang_str : str , set : dict = {} ) -> None : #todo
         """
 
         # add a new language
@@ -266,18 +274,10 @@ class lang :
         if not change :
             change = self.change
 
-        if not lang_str :
-            lang_str = self.use_locale
-
-        if lang_str in self.lang_str_list :
-            language = self.language_dict[ lang_str ]
-
-        else :
-            raise KeyError( f"lang '{lang_str}' has not find!" )
-
         i = 0
         Ret = ""
         text = "".join( args ).split( change )
+        language = self._lang_str_to_language( lang_str )
 
         for I in text :
             if i % 2 :
