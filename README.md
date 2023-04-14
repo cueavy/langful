@@ -19,7 +19,6 @@
 
 </p>
 
-
 # install
 
 Use `pip` to install `pip install langful` or `pip3 install langful`

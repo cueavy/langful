@@ -212,7 +212,21 @@ class lang :
 
     def remove( self , lang_str : str ) -> None : #todo
         """
-        # todo
+
+        # remove a language
+
+        lang_str: the language's name
+
+        ps: It can't change the file
+
+        ---
+
+        # 移除语言
+
+        lang_str: 语言名称
+
+        ps: 它不会影响文件
+
         """
         if lang_str == self.use_locale or lang_str == self.default_lang or lang_str == self.default_locale :
             raise RuntimeError( f"can't remove '{lang_str}' " )
