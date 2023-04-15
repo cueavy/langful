@@ -149,6 +149,14 @@ class lang :
             raise KeyError( f"lang '{lang_str}' has not find!" )
 
     def save( self ) -> None :
+        """
+        # save
+        to save all lang file
+
+        ---
+
+        保存所有lang文件
+        """
         if self.type == FILE :
             for k , v in self.language_dict.items() :
                 try :
