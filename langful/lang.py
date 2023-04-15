@@ -1,3 +1,7 @@
+"""
+# lang
+"""
+import traceback
 import locale
 import json
 import os
@@ -7,7 +11,7 @@ from langful.define import *
 
 class lang :
 
-    def __init__( self , lang_dir = "lang" , default_lang : str = "en_us" , file_suffix : str = ".json" , change : str = "%" ) -> None :
+    def __init__( self , lang_dir = "lang" , default_lang : str = "en_us" , file_type : str = JSON , change : str = "%" ) -> None :
         """
         # lang object
 
@@ -17,7 +21,7 @@ class lang :
 
         default_lang: Default translation
 
-        file_suffix: Such as '.json' or '.lang'
+        file_type: 'json' or 'lang'
 
         change: Specifies what character to use for substitution , default is '%'
 
@@ -27,7 +31,7 @@ class lang :
 
         default_lang: 默认使用的翻译
 
-        file_suffix: 文件后缀 例如 '.json' '.lang' '.txt' 等等
+        file_type: 文件后缀 'json' 或 'lang'
 
         change: 选择用什么符号做替换 默认为'%'
 
@@ -38,6 +42,8 @@ class lang :
 
         if self.type == FILE :
 
+            file_suffix = f".{file_type}"
+
             if not os.path.exists( lang_dir ) : # 判断lang文件夹是否存在
                 raise KeyError( f"'{lang_dir}' dir not find" )
             if not len( os.listdir(lang_dir) ) :
@@ -46,7 +52,7 @@ class lang :
                 raise KeyError( f"'{default_lang}' not find" )
 
             lang_file = os.path.join( lang_dir , default_locale + file_suffix )
-            file_suffix_len=len(file_suffix)
+            file_suffix_len = len( file_suffix )
             lang_file_list = []
             language_dict = {}
             use_locale = default_locale
@@ -55,12 +61,26 @@ class lang :
                 lang_file = default_lang + file_suffix
 
             for filename in os.listdir(lang_dir): # 尝试加载所有能加载的模块
-                if len( filename ) > file_suffix_len and filename[-file_suffix_len:] == file_suffix :
+                if len( filename ) > file_suffix_len and filename[ -file_suffix_len: ] == file_suffix :
                     try :
                         with open( os.path.join( lang_dir , filename ) , encoding = UTF8 ) as file :
-                            language_dict[ filename[ :-file_suffix_len ] ] = json.load( file ) # 加载文件
+                            if file_type == JSON :
+                                l = json.load( file ) # 直接加载JSON文件
+                            elif file_type == LANG :
+                                l = {}
+                                for i in file.read().split( "\n" ) : # 去换行
+                                    if i :
+                                        k , v = i.split( "=" ) # 键 = 值
+                                        if v and v[0] == " " : # 去空格
+                                            v = v[ 1: ]
+                                        l[ "".join( k.split() ) ] = v
+                            else :
+                                raise TypeError( f"can't use type '{file_type}'" )
+                        language_dict[ filename[ :-file_suffix_len ] ] = l # 加载文件
                         lang_file_list.append( filename )
-                    except : pass
+                    except Exception as e :
+                        print( f"{e}\n" )
+                        traceback.print_exc()
 
         elif self.type == DICT :
             use_locale = default_lang
@@ -90,9 +110,9 @@ class lang :
         self.change = change
 
         if self.type == FILE :
-            #file_suffix: Such as '.json' '.lang'
-            #file_suffix: 文件后缀 例如 '.json' '.lang'
-            self.file_suffix = file_suffix
+            #file_type: 'json' or 'lang'
+            #file_type: 'json' 或 'lang'
+            self.file_type = file_type
             # lang_file: Choose to use's language file
             # lang_file: 选择使用的语言文件
             self.lang_file = lang_file
@@ -110,17 +130,40 @@ class lang :
         # language: Load need's language file
         # language: 加载需要的语言文件
         self.language = self.language_dict[ self.use_locale ]
+    def _file_suffix_reload( self ) -> None :
+        #file_suffix: Such as '.json' '.lang'
+        #file_suffix: 文件后缀 例如 '.json' '.lang'
+        if self.type == FILE :
+            self.file_suffix = "." + self.file_type
     def _reload( self ) -> None :
         self._lang_str_list_reload()
         self._language_reload()
+        self._file_suffix_reload()
 
-    def _lang_str_to_language( self , lang_str ) :
+    def _lang_str_to_language( self , lang_str ) -> dict :
         if not lang_str :
             lang_str = self.use_locale
         if lang_str in self.lang_str_list :
             return self.language_dict[ lang_str ]
         else :
             raise KeyError( f"lang '{lang_str}' has not find!" )
+
+    def save( self ) -> None :
+        if self.type == FILE :
+            for k , v in self.language_dict.items() :
+                try :
+                    with open( os.path.join( self.lang_dir , k + self.file_suffix ) , "w+" , encoding = UTF8 ) as file :
+                        if self.file_type == JSON :
+                            file.write( json.dumps( v , indent=4 , ensure_ascii = False ) )
+                        elif self.file_type == LANG :
+                            for i_k , i_v in v.items() :
+                                s = f"{i_k} = {i_v}\n"
+                                file.write( s )
+                except Exception as e :
+                    print( f"{e}\n" )
+                    traceback.print_exc()
+        else :
+            raise TypeError( f"{self.type} can't to save" )
 
     def get( self , key:str , lang_str:str = None ) -> str : # 输入键 获取对应的值
         """
@@ -191,7 +234,7 @@ class lang :
         else :
             raise KeyError( f"lang '{lang_str}' has not find!" )
 
-    def add( self , lang_str : str , set : dict = {} ) -> None : #todo
+    def add( self , lang_str : str , set : dict = {} , change_file : bool = False ) -> None :
         """
 
         # add a new language
@@ -200,7 +243,7 @@ class lang :
 
         set: the language dictionary
 
-        ps: It can't change the file
+        change_file: modify the file
 
         ---
 
@@ -210,22 +253,24 @@ class lang :
 
         set: 语言字典
 
-        ps: 它不会影响文件
+        change_file: 是否修改文件
 
         """
         self.language_dict[ lang_str ] = set
         if lang_str == self.default_locale :
             self.use_locale = lang_str
+        if self.type == FILE and change_file :
+            self.save()
         self._reload()
 
-    def remove( self , lang_str : str ) -> None : #todo
+    def remove( self , lang_str : str , change_file : bool = False ) -> None :
         """
 
         # remove a language
 
         lang_str: the language's name
 
-        ps: It can't change the file
+        change_file: modify the file
 
         ---
 
@@ -233,13 +278,15 @@ class lang :
 
         lang_str: 语言名称
 
-        ps: 它不会影响文件
+        change_file: 是否修改文件
 
         """
         if lang_str == self.use_locale or lang_str == self.default_lang or lang_str == self.default_locale :
             raise RuntimeError( f"can't remove '{lang_str}' " )
         del self.language_dict[ lang_str ]
         del self.lang_str_list[ self.lang_str_list.index( lang_str ) ]
+        if self.type == FILE and change_file :
+            self.save()
         self._reload()
 
     def replace( self , * args : str , lang_str : str = None , change : str = None ) -> str : # 替换字符串 使用%号

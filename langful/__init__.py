@@ -87,5 +87,7 @@ issues: https://github.com/cueavyqwp/langful/issues
 
 # 'lang' object
 from langful.lang import *
-# Some functions for 'langful'
-from langful.functions import *
+# Some function for 'langful'
+from langful.function import *
+# define
+from langful.define import *

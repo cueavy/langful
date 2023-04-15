@@ -1,9 +1,15 @@
+"""
+# define
+"""
+
+# type
+JSON = "json"
+LANG = "lang"
+
 FILE = "file"
 DICT = "dict"
-
+# encode/decode
 UTF8 = "utf-8"
-
-def TheTypeError( obj , message : str = "" ) -> None : raise TypeError(f"{ message }can't use type { type( obj ) }")
 
 def get_type( obj ) -> str :
     if isinstance( obj , str ) :
@@ -11,4 +17,4 @@ def get_type( obj ) -> str :
     elif isinstance( obj , dict ) :
         return DICT
     else :
-        TheTypeError( obj )
+        raise TypeError(f"can't use type { type( obj ) }")
