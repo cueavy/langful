@@ -11,6 +11,12 @@ DICT = "dict"
 # encode/decode
 UTF8 = "utf-8"
 
+def join( args : list ) -> str :
+    return "".join( args )
+
+def range_len( obj ) -> list :
+    return list( range( len( obj ) ) )
+
 def get_type( obj ) -> str :
     if isinstance( obj , str ) :
         return FILE
