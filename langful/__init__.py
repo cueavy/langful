@@ -37,26 +37,26 @@ Text = langful.lang()
 
 print( Text.language_dict )
 
-print( Text.replace( "%hi%" , lang_str = "zh_cn" ) )
+print( Text.str_replace( "%hi%" , lang_str = "zh_cn" ) )
 
-print( Text.replace( "!hi!" , lang_str = "zh_cn" , change = "!" ) )
+print( Text.str_replace( "!hi!" , lang_str = "zh_cn" , change = "!" ) )
 
-print( Text.replace( "%welcome%" , lang_str = "zh_cn" ) )
+print( Text.str_replace( "%welcome%" , lang_str = "zh_cn" ) )
 
-print( Text.replace( "!welcome!" , lang_str = "zh_cn" , change = "!" ) )
+print( Text.str_replace( "!welcome!" , lang_str = "zh_cn" , change = "!" ) )
 
-print( Text.replace( "%hi%" , lang_str = "en_us" ) )
+print( Text.str_replace( "%hi%" , lang_str = "en_us" ) )
 
-print( Text.replace( "!hi!" , lang_str = "en_us" , change = "!" ) )
+print( Text.str_replace( "!hi!" , lang_str = "en_us" , change = "!" ) )
 
-print( Text.replace( "%welcome%" , lang_str = "en_us" ) )
+print( Text.str_replace( "%welcome%" , lang_str = "en_us" ) )
 
-print( Text.replace( "!welcome!" , lang_str = "en_us" , change = "!" ) )
+print( Text.str_replace( "!welcome!" , lang_str = "en_us" , change = "!" ) )
 
 print( )
 
-print( Text.replace( "%%" ) )
-print( Text.replace( "!!" , change = "!" ) )
+print( Text.str_replace( "%%" ) )
+print( Text.str_replace( "!!" , change = "!" ) )
 ```
 
 ## Output
