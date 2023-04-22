@@ -6,7 +6,6 @@ import locale
 import json
 import os
 
-from langful.__init__ import *
 from langful.define import *
 
 class lang :
@@ -65,21 +64,21 @@ class lang :
                     try :
                         with open( os.path.join( lang_dir , filename ) , encoding = UTF8 ) as file :
                             if file_type == JSON :
-                                l = json.load( file ) # 直接加载JSON文件
+                                loaded_lang_file = json.load( file ) # 直接加载JSON文件
                             elif file_type == LANG :
-                                l = {}
+                                loaded_lang_file = {}
                                 for i in file.read().split( "\n" ) : # 去换行
                                     if i :
-                                        k , v = i.split( "=" ) # 键 = 值
-                                        if v and v[0] == " " : # 去空格
-                                            v = v[ 1: ]
-                                        l[ join( k.split() ) ] = v
+                                        key , value = i.split( "=" ) # 键 = 值
+                                        if value and value[0] == " " : # 去空格
+                                            value = value[ 1: ]
+                                        loaded_lang_file[ join( key.split() ) ] = value
                             else :
                                 raise TypeError( f"can't use type '{file_type}'" )
-                        language_dict[ filename[ :-file_suffix_len ] ] = l # 加载文件
+                        language_dict[ filename[ :-file_suffix_len ] ] = loaded_lang_file # 加载文件
                         lang_file_list.append( filename )
-                    except Exception as e :
-                        print( f"{e}\n" )
+                    except Exception as error :
+                        print( f"{error}\n" )
                         traceback.print_exc()
 
         elif self.type == DICT :
@@ -158,15 +157,15 @@ class lang :
         保存所有lang文件
         """
         if self.type == FILE :
-            for k , v in self.language_dict.items() :
+            for key , value in self.language_dict.items() :
                 try :
-                    with open( os.path.join( self.lang_dir , k + self.file_suffix ) , "w+" , encoding = UTF8 ) as file :
+                    with open( os.path.join( self.lang_dir , key + self.file_suffix ) , "w+" , encoding = UTF8 ) as file :
                         if self.file_type == JSON :
-                            file.write( json.dumps( v , indent = 4 , separators = ( " ," , ": " ) , ensure_ascii = False ) )
+                            file.write( json.dumps( value , indent = 4 , separators = ( " ," , ": " ) , ensure_ascii = False ) )
                         elif self.file_type == LANG :
-                            for i_k , i_v in v.items() :
-                                s = f"{i_k} = {i_v}\n"
-                                file.write( s )
+                            for i_k , i_v in value.items() :
+                                line = f"{i_k} = {i_v}\n"
+                                file.write( line )
                 except Exception as e :
                     print( f"{e}\n" )
                     traceback.print_exc()
@@ -203,7 +202,6 @@ class lang :
                 return self.language_dict[ lang_str ] [ key ]
             else :
                 raise KeyError( f"key '{key}' has not in dictionary!" )
-            
         else :
             raise KeyError( f"lang '{lang_str}' has not find!" )
 
@@ -397,16 +395,16 @@ class lang :
         text = join( args ).split( change )
         language = self._lang_str_to_language( lang_str )
 
-        for I in text :
+        for split_text in text :
             if i % 2 :
-                if I in language :
-                    ret += language[I]
-                elif not I :
+                if split_text in language :
+                    ret += language[split_text]
+                elif not split_text :
                     ret += change
                 else :
-                    raise KeyError( f"key '{I}' has not find!" )
+                    raise KeyError( f"key '{split_text}' has not find!" )
             else :
-                ret += I
+                ret += split_text
             i += 1
 
         return ret

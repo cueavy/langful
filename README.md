@@ -16,7 +16,6 @@
     <a href="https://github.com/cueavyqwp/langful">
         <img alt="Github issues" src="https://img.shields.io/github/issues/cueavyqwp/langful?color=blue">
     </a>
-
 </p>
 
 # install
