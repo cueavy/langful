@@ -166,13 +166,13 @@ class lang :
                             for i_k , i_v in value.items() :
                                 line = f"{i_k} = {i_v}\n"
                                 file.write( line )
-                except Exception as e :
-                    print( f"{e}\n" )
+                except Exception as error :
+                    print( f"{error}\n" )
                     traceback.print_exc()
         else :
             raise TypeError( f"{self.type} can't to save" )
 
-    def get( self , key:str , lang_str:str = None ) -> str : # 输入键 获取对应的值
+    def get( self , key : str , lang_str : str = None ) -> str : # 输入键 获取对应的值
         """
 
         # get
