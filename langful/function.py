@@ -1,7 +1,6 @@
 """
 # function
 """
-from langful.__init__ import *
 
 def if_then( text : str = "" , replace = "" , change : str = "%" , else_replace : str = "" ) -> str :
     """
@@ -49,4 +48,3 @@ def if_then( text : str = "" , replace = "" , change : str = "%" , else_replace 
             Ret += I
         i += 1
     return Ret
-
