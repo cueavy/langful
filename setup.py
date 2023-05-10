@@ -1,9 +1,19 @@
+from shutil import rmtree
 import setuptools
+import os
+
+if os.path.exists("build") :
+    rmtree("build")
+if os.path.exists("langful.egg-info") :
+    rmtree("langful.egg-info")
+if os.path.exists("dist") :
+    rmtree("dist")
+
 with open( "README.md" , "r" , encoding = "utf-8" ) as fh :
     long_description = fh.read()
 setuptools.setup(
     name="langful" , # 模块名称
-    version="0.25" , # 当前版本
+    version="0.26" , # 当前版本
     author="cueavyqwp" , # 作者
     author_email="cueavyqwp@outlook.com" , # 作者邮箱
     description="", # 模块简介
@@ -22,6 +32,10 @@ setuptools.setup(
     ],
     python_requires='> 3.6' ,
 )
+
+rmtree("build")
+rmtree("langful.egg-info")
+
 # 删除文件夹 build 和 langful.egg-info
 # 检查setuptools更新 python -m pip install --user --upgrade setuptools wheel
 # 安装模块 pip install twine

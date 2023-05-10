@@ -12,9 +12,13 @@ def if_then( text : str = "" , replace = "" , change : str = "%" , else_replace 
 
     ---
     text: the text
+
     replace: give str or list for replace the text
+
     change: Specifies what character to use for substitution , default is '%'
+
     else_replace: if it was not , then use it to replace
+
     ---
     如果某个特定项的布尔值为真或假
     
@@ -22,9 +26,13 @@ def if_then( text : str = "" , replace = "" , change : str = "%" , else_replace 
 
     ---
     text: 文本
+
     replace: 给一个字符串或列表 来替换文本
+
     change: 选择用什么符号做替换 默认为'%'
+
     else_replace: 如果为否 那么用这个来做替换
+
     ---
     """
     i , p = 0 , 0
@@ -48,3 +56,43 @@ def if_then( text : str = "" , replace = "" , change : str = "%" , else_replace 
             Ret += I
         i += 1
     return Ret
+
+def to_json( lang : str ) :
+    """
+    # 'to_json' function
+    from .lang file to .json file
+
+    ---
+
+    把lang文件转换为json文件
+    """
+    ret={}
+    lang = lang.split("\n")
+    for i in lang :
+        I=i.split("#")[0]#移除注释
+        I=I.split("=")
+        if len(I) == 2 :
+            key , value = I
+            if value[0] == " " :
+                value = value[1:]
+            if key[-1] == " " :
+                key = key[:-1]
+            ret[key]=value
+    return ret
+
+def to_lang( dict : dict ) :
+    """
+    # 'to_lang' function
+    from .json file to .lang file
+
+    ---
+
+    把json文件转换为lang文件
+    """
+    ret = ""
+    for key , value in dict.items() :
+        if isinstance( value , str ) :
+            ret += f"{key} = {value}\n"
+        else :
+            raise TypeError( "" )
+    return ret

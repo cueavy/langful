@@ -7,6 +7,7 @@ import json
 import os
 
 from langful.define import *
+from langful.function import to_json , to_lang
 
 class lang :
 
@@ -66,13 +67,7 @@ class lang :
                             if file_type == JSON :
                                 loaded_lang_file = json.load( file ) # 直接加载JSON文件
                             elif file_type == LANG :
-                                loaded_lang_file = {}
-                                for i in file.read().split( "\n" ) : # 去换行
-                                    if i :
-                                        key , value = i.split( "=" ) # 键 = 值
-                                        if value and value[0] == " " : # 去空格
-                                            value = value[ 1: ]
-                                        loaded_lang_file[ join( key.split() ) ] = value
+                                loaded_lang_file = to_json( file.read() )
                             else :
                                 raise TypeError( f"can't use type '{file_type}'" )
                         language_dict[ filename[ :-file_suffix_len ] ] = loaded_lang_file # 加载文件
@@ -163,9 +158,7 @@ class lang :
                         if self.file_type == JSON :
                             file.write( json.dumps( value , indent = 4 , separators = ( " ," , ": " ) , ensure_ascii = False ) )
                         elif self.file_type == LANG :
-                            for i_k , i_v in value.items() :
-                                line = f"{i_k} = {i_v}\n"
-                                file.write( line )
+                            file.write( to_lang( value ) )
                 except Exception as error :
                     print( f"{error}\n" )
                     traceback.print_exc()
