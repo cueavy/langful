@@ -70,7 +70,7 @@ def to_json( lang : str ) :
     lang = lang.split("\n")
     for i in lang :
         I=i.split("#")[0]#移除注释
-        I=I.split("=")
+        I=I.split( "=" , 1 )
         if len(I) == 2 :
             key , value = I
             if value[0] == " " :
