@@ -1,13 +1,15 @@
-from os import path , system
 from shutil import rmtree
 import setuptools
+import os
 
-if path.exists("build") :
+if os.path.exists("build") :
     rmtree("build")
-if path.exists("langful.egg-info") :
+if os.path.exists("langful.egg-info") :
     rmtree("langful.egg-info")
-if path.exists("dist") :
+if os.path.exists("dist") :
     rmtree("dist")
+if os.path.exists( os.path.join( "langful" , "__pycache__" ) ) :
+    rmtree( os.path.join( "langful" , "__pycache__" ) )
 
 with open( "README.md" , "r" , encoding = "utf-8" ) as fh :
     long_description = fh.read()
@@ -35,7 +37,7 @@ setuptools.setup(
 
 rmtree("build")
 rmtree("langful.egg-info")
-system("twine upload dist/*")
+os.system("twine upload dist/*")
 
 # 删除文件夹 build 和 langful.egg-info
 # 检查setuptools更新 python -m pip install --user --upgrade setuptools wheel
