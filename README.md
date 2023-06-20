@@ -22,7 +22,7 @@
 
 Use `pip` to install `pip install langful` or `pip3 install langful`
 
-# example
+# example(too old)
 
 - test.py
 - lang

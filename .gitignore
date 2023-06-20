@@ -1,6 +1,7 @@
-/lang
-/test.py
-/langful.egg-info
-/build
-/langful/__pycache__
-/.vscode
+*__pycache__
+*.egg-info
+*.vscode
+*build
+*test*
+*lang
+*.pyc
