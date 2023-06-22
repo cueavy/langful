@@ -68,8 +68,10 @@ class lang :
                 with open( os.path.join( path , i ) , encoding = "utf-8" ) as file :
                     if suffix == ".json" :
                         data = json.load( file )
-                    else :
+                    elif suffix == ".lang" :
                         data = lang_to_json( file.read() )
+                    else :
+                        continue
                 self.locales.append( name )
                 self.languages[ name ] = data
                 self.types[ name ] = suffix
