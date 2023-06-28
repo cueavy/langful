@@ -1,7 +1,13 @@
+/*
+
+!dist
+!LICENSE
+!langful
+!setup.py
+!README.md
+!.gitignore
+
 *__pycache__
-*.egg-info
-*.vscode
-*build
-*test*
+*.json
 *lang
 *.pyc

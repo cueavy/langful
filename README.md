@@ -1,98 +1,118 @@
-# langful
-
-<p align="center">
-    <a href="https://pypi.org/project/langful">
-        <img alt="PyPI version" src="https://img.shields.io/pypi/v/langful?color=blue">
+<div align="center">
+    <h1>langful</h1>
+    <a href = "https://pypi.org/project/langful" >
+        <img alt = "PyPI version" src = "https://img.shields.io/pypi/v/langful?color=blue" >
     </a>
-    <a href="https://www.python.org">
-        <img alt="Python version" src="https://img.shields.io/badge/python-3.6+-blue">
+    <a href = "https://www.python.org" >
+        <img alt = "Python version" src = "https://img.shields.io/badge/python-3.6+-blue" >
     </a>
-    <a href="https://opensource.org/license/mit/">
-        <img alt="license" src="https://img.shields.io/badge/license-MIT-blue">
+    <a href = "https://opensource.org/license/mit" >
+        <img alt = "license" src = "https://img.shields.io/badge/license-MIT-blue" >
     </a>
-    <a href="https://github.com/cueavyqwp/langful">
-        <img alt="Github stars" src="https://img.shields.io/github/stars/cueavyqwp/langful?color=blue">
+    <a href = "https://github.com/cueavyqwp/langful" >
+        <img alt = "Github stars" src = "https://img.shields.io/github/stars/cueavyqwp/langful?color=blue" >
     </a>
-    <a href="https://github.com/cueavyqwp/langful">
-        <img alt="Github issues" src="https://img.shields.io/github/issues/cueavyqwp/langful?color=blue">
+    <a href = "https://github.com/cueavyqwp/langful" >
+        <img alt = "Github issues" src = "https://img.shields.io/github/issues/cueavyqwp/langful?color=blue" >
     </a>
-</p>
+</div>
 
 # install
 
-Use `pip` to install `pip install langful` or `pip3 install langful`
+`pip3 install langful` or `pip install langful`
 
-# example(too old)
+# vscode-langful
 
-- test.py
-- lang
-    - zh_cn.json
-    - en_us.json
+[GitHub](https://github.com/cueavy/vscode-langful)
 
-## zh_cn.json
+[VSCode](https://marketplace.visualstudio.com/items?itemName=cueavyqwp.langful)
 
-```json
-{
-    "hi" : "你好" ,
-    "welcome" : "欢迎"
-}
-```
+# get start
 
-## en_us.json
+## lang file
+
+> ps: `langful` load json file first
+
+### .json
 
 ```json
 {
-    "hi" : "Hi" ,
-    "welcome" : "Welcome"
+    "key": "value" ,
+    "..." : "..."
 }
 ```
 
-## tset.py
+### .lang
+
+```
+key = value # hi, this is a example
+# hi, I am a example, too
+... = ...
+```
+
+## init
+
+there have `two` ways to init
+
+> by files
 
 ```python
 import langful
-
-Text = langful.lang()
-
-print( Text.language_dict )
-
-print( Text.str_replace( "%hi%" , lang_str = "zh_cn" ) )
-
-print( Text.str_replace( "!hi!" , lang_str = "zh_cn" , change = "!" ) )
-
-print( Text.str_replace( "%welcome%" , lang_str = "zh_cn" ) )
-
-print( Text.str_replace( "!welcome!" , lang_str = "zh_cn" , change = "!" ) )
-
-print( Text.str_replace( "%hi%" , lang_str = "en_us" ) )
-
-print( Text.str_replace( "!hi!" , lang_str = "en_us" , change = "!" ) )
-
-print( Text.str_replace( "%welcome%" , lang_str = "en_us" ) )
-
-print( Text.str_replace( "!welcome!" , lang_str = "en_us" , change = "!" ) )
-
-print( )
-
-print( Text.str_replace( "%%" ) )
-print( Text.str_replace( "!!" , change = "!" ) )
+lang = langful.lang()
 ```
 
-## Output
+> by dictionary
 
 ```python
-{'en_us': {'welcome': 'Welcome', 'hi': 'Hi'}, 'zh_cn': {'welcome': '欢迎', 'hi': '你好'}}
-你好
-你好
-欢迎
-欢迎
-Hi
-Hi
-Welcome
-Welcome
+import langful
+lang = langful.lang( False )
+lang.init_dict( {
+    "en_us" : {
+        "hi" : "Hi" ,
+        "welcome" : "Welcome"
+    } ,
+    "zh_cn" : {
+        "hi" : "你好" ,
+        "welcome" : "欢迎"
+    }
+} )
+```
 
-%
-!
+## replace
+
+have bug
+
+<!-- ```python
+import langful
+lang = langful.lang( False )
+lang.init_dict( {
+    "en_us" : {
+        "hi" : "Hi" ,
+        "welcome" : "Welcome"
+    } ,
+    "zh_cn" : {
+        "hi" : "你好" ,
+        "welcome" : "欢迎"
+    }
+} )
+``` -->
+
+## replace str
+
+```python
+import langful
+lang = langful.lang( False )
+lang.init_dict( {
+    "en_us" : {
+        "hi" : "Hi" ,
+        "welcome" : "Welcome"
+    } ,
+    "zh_cn" : {
+        "hi" : "你好" ,
+        "welcome" : "欢迎"
+    }
+} )
+print(lang.replace_str( "%hi%, %welcome%!" ))
 ```
 
 # About
