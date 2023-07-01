@@ -19,56 +19,56 @@
 ---
 
 [
-en_us
+[en_us](./README.md)
 |
-[zh_cn](./README-zh_cn.md)
+zh_cn
 ]
 
 ---
 
 </div>
 
-# install
+# 安装
 
-`pip3 install langful` or `pip install langful`
+`pip3 install langful` 或 `pip install langful`
 
-# get start
+# 开始
 
-## lang file
+## 翻译文件
 
-> ps: `langful` load json file first
+> 注: `langful` 默认先加载 `.json` 文件
 
 .json
 
 ```json
 {
-    "key": "value" ,
+    "键": "值" ,
     "..." : "..."
 }
 ```
 
 .lang
 
-> if you need highlight, you can install `vscode-langful` : [GitHub](https://github.com/cueavy/vscode-langful) [VSCode](https://marketplace.visualstudio.com/items?itemName=cueavyqwp.langful)
+> 若需要高亮 请安装 `vscode-langful` : [GitHub](https://github.com/cueavy/vscode-langful) [VSCode](https://marketplace.visualstudio.com/items?itemName=cueavyqwp.langful)
 
 ```
-key = value # hi, this is a example
-# hi, I am a example, too
+键 = 值 # 嗨, 这是个示例
+# 嗨, 这也是个示例
 ... = ...
 ```
 
-## init
+## 初始化
 
-there have `two` ways to init
+共有 `两种` 方式进行初始化
 
-by files
+### 通过文件
 
 ```python
 import langful
 lang = langful.lang()
 ```
 
-by dictionary
+### 通过字典
 
 ```python
 import langful
@@ -85,11 +85,11 @@ lang.init_dict( {
 } )
 ```
 
-## function
+## 函数
 
-### replace
+### 替换
 
-have bug
+有BUG
 
 <!-- ```python
 import langful
@@ -106,7 +106,7 @@ lang.init_dict( {
 } )
 ``` -->
 
-### replace str
+### 替换字符串
 
 ```python
 import langful
@@ -124,7 +124,7 @@ lang.init_dict( {
 print(lang.replace_str( "%hi%, %welcome%!" ))
 ```
 
-# about
+# 关于
 
 [
 [github](https://github.com/cueavyqwp/langful)

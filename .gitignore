@@ -6,6 +6,7 @@
 !setup.py
 !README.md
 !.gitignore
+!README-zh_cn.md
 
 *__pycache__
 *.json

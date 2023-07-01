@@ -33,6 +33,17 @@ def json_to_lang( dict_file : dict ) -> str :
         ret += f"{ key } = { value }\n"
     return ret
 
+# def split( text : str , split_letter : str ) :
+#     """
+#     split text
+#     """
+#     spl = []
+#     ret = []
+#     p = 0
+#     for i in range( len( text ) ) :
+#         print( i )
+#     return ret
+
 class lang :
     """
     # lang
@@ -239,22 +250,11 @@ class lang :
         #     print(text[i])
         #     p += 1
         # return ret
-        if not replace_letter :
-            replace_letter = self.replace_letter
-        if not locale :
-            locale = self.locale
-        text = self.get( key , locale ).split( replace_letter )
-        if len( text ) == 1 :
-            text = text[0]
+        locale = self.get_locale( locale )
+        replace_letter = self.get_replace_letter( replace_letter )
+        text = []
         ret = ""
-        for i in range( len( text ) ) :
-            if ( len( text ) - 1 ) > i :
-                if len( args ) > i :
-                    ret += text[i] + args[i]
-                else :
-                    ret += text[i] + args[-1]
-            else :
-                ret += text[i]
+        p = 0
         return ret
 
     def replace_str( self , text : str , locale : str = None , replace_letter : str = None ) -> str :
