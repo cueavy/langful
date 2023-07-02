@@ -36,7 +36,7 @@ setuptools.setup(
     description = "" ,
     long_description = long_description ,
     long_description_content_type = "text/markdown" ,
-    url = "https://github.com/cueavyqwp/langful" ,
+    url = "https://github.com/cueavy/langful" ,
     packages = setuptools.find_packages() ,
     classifiers = [
         "Programming Language :: Python :: 3" ,
@@ -51,6 +51,8 @@ rmtree( "build" )
 rmtree( "langful.egg-info" )
 
 # 上传pypi
+os.system( "twine upload dist/*" )
+
 # 在 %USERPROFILE% 创建 .pypirc 文件
 # 并写入( 记得删除井号 )
 
@@ -62,5 +64,3 @@ rmtree( "langful.egg-info" )
 # password = 密码
 
 # 即可自动登录
-
-os.system( "twine upload dist/*" )
