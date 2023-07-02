@@ -37,6 +37,8 @@ en_us
 ## lang file
 
 > ps: `langful` load json file first
+>
+> or you can set to `langful.lang( json_first = False )`
 
 .json
 
@@ -61,14 +63,24 @@ key = value # hi, this is a example
 
 there have `two` ways to init
 
-by files
+### by files
 
 ```python
 import langful
 lang = langful.lang()
 ```
 
-by dictionary
+then you can put file at there :
+
+* lang
+* * en_us.lang
+* * en_us.json
+* * zh_cn.lang
+* * zh_cn.json
+
+or use other directory name and set `langful.lang( "directory name" )`
+
+### by dictionary
 
 ```python
 import langful
@@ -89,22 +101,17 @@ lang.init_dict( {
 
 ### replace
 
-have bug
 
-<!-- ```python
-import langful
+```python
 lang = langful.lang( False )
+lang.replace_letter = "&"
 lang.init_dict( {
     "en_us" : {
-        "hi" : "Hi" ,
-        "welcome" : "Welcome"
-    } ,
-    "zh_cn" : {
-        "hi" : "你好" ,
-        "welcome" : "欢迎"
+        "test" : "&.&%"
     }
 } )
-``` -->
+print( lang.replace( "test" , [ 33 , 3 ] ) )
+```
 
 ### replace str
 

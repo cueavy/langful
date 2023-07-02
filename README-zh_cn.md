@@ -37,6 +37,8 @@ zh_cn
 ## 翻译文件
 
 > 注: `langful` 默认先加载 `.json` 文件
+>
+> 或者设置为 `langful.lang( json_first = False )`
 
 .json
 
@@ -68,6 +70,16 @@ import langful
 lang = langful.lang()
 ```
 
+然后可以将文件放在 :
+
+* lang
+* * en_us.lang
+* * en_us.json
+* * zh_cn.lang
+* * zh_cn.json
+
+或者设置为别的目录 并设置 `langful.lang( "目录名称" )`
+
 ### 通过字典
 
 ```python
@@ -89,22 +101,17 @@ lang.init_dict( {
 
 ### 替换
 
-有BUG
 
-<!-- ```python
-import langful
+```python
 lang = langful.lang( False )
+lang.replace_letter = "&"
 lang.init_dict( {
     "en_us" : {
-        "hi" : "Hi" ,
-        "welcome" : "Welcome"
-    } ,
-    "zh_cn" : {
-        "hi" : "你好" ,
-        "welcome" : "欢迎"
+        "test" : "&.&%"
     }
 } )
-``` -->
+print( lang.replace( "test" , [ 33 , 3 ] ) )
+```
 
 ### 替换字符串
 

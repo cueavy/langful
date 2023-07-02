@@ -4,7 +4,7 @@ import sys
 import os
 
 # 版本
-version = "0.30"
+version = "0.31"
 
 # 更新与导入
 pip.main( [ "install" , "--upgrade" , "setuptools" , "wheel" ] )
@@ -51,4 +51,16 @@ rmtree( "build" )
 rmtree( "langful.egg-info" )
 
 # 上传pypi
+# 在 %USERPROFILE% 创建 .pypirc 文件
+# 并写入( 记得删除井号 )
+
+# [distutils]
+# index-servers = pypi
+#
+# [pypi]
+# username = 用户名
+# password = 密码
+
+# 即可自动登录
+
 os.system( "twine upload dist/*" )
