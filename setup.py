@@ -4,7 +4,7 @@ import sys
 import os
 
 # 版本
-version = "0.31"
+version = "0.32"
 
 # 更新与导入
 pip.main( [ "install" , "--upgrade" , "setuptools" , "wheel" ] )
@@ -21,7 +21,7 @@ if os.path.exists( os.path.join( "langful" , "__pycache__" ) ) :
     rmtree( os.path.join( "langful" , "__pycache__" ) )
 
 # 参数
-sys.argv = [ "setup.py" , "bdist_wheel" , "--universal" ]
+sys.argv = [ "setup.py" , "bdist_wheel" ]
 
 # 读取README.md
 with open( "README.md" , "r" , encoding = "utf-8" ) as file :
@@ -33,7 +33,7 @@ setuptools.setup(
     version = version ,
     author = "cueavyqwp" ,
     author_email = "cueavyqwp@outlook.com" ,
-    description = "" ,
+    description = "Help to localization" ,
     long_description = long_description ,
     long_description_content_type = "text/markdown" ,
     url = "https://github.com/cueavy/langful" ,
@@ -43,7 +43,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License" ,
         "Operating System :: OS Independent" ,
     ] ,
-    python_requires = '> 3.6' ,
+    python_requires = '>= 3.6' ,
 )
 
 # 清理
