@@ -9,11 +9,11 @@
     <a href = "https://opensource.org/license/mit" >
         <img alt = "license" src = "https://img.shields.io/badge/license-MIT-blue" >
     </a>
-    <a href = "https://github.com/cueavyqwp/langful" >
-        <img alt = "Github stars" src = "https://img.shields.io/github/stars/cueavyqwp/langful?color=blue" >
+    <a href = "https://github.com/cueavy/langful" >
+        <img alt = "Github stars" src = "https://img.shields.io/github/stars/cueavy/langful?color=blue" >
     </a>
-    <a href = "https://github.com/cueavyqwp/langful" >
-        <img alt = "Github issues" src = "https://img.shields.io/github/issues/cueavyqwp/langful?color=blue" >
+    <a href = "https://github.com/cueavy/langful" >
+        <img alt = "Github issues" src = "https://img.shields.io/github/issues/cueavy/langful?color=blue" >
     </a>
 
 ---
@@ -101,7 +101,6 @@ lang.init_dict( {
 
 ### 替换
 
-
 ```python
 lang = langful.lang( False )
 lang.replace_letter = "&"
@@ -131,10 +130,27 @@ lang.init_dict( {
 print(lang.replace_str( "%hi%, %welcome%!" ))
 ```
 
+### 合并
+
+```python
+import langful
+lang = langful.lang( False )
+lang.init_dict( {
+    "en_us" : {
+        "hi" : "Hi" ,
+        "welcome" : "Welcome"
+    } ,
+    "zh_cn" : {
+        "hi" : "你好"
+    }
+} )
+print( lang.merge( "en_us" , [ "zh_cn" ] ) )
+```
+
 # 关于
 
 [
-[github](https://github.com/cueavyqwp/langful)
+[github](https://github.com/cueavy/langful)
 |
 [pypi](https://pypi.org/project/langful)
 ]

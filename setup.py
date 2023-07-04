@@ -4,7 +4,7 @@ import sys
 import os
 
 # 版本
-version = "0.32"
+version = "0.33"
 
 # 更新与导入
 pip.main( [ "install" , "--upgrade" , "setuptools" , "wheel" ] )
@@ -51,6 +51,7 @@ rmtree( "build" )
 rmtree( "langful.egg-info" )
 
 # 上传pypi
+input( "pass enter to upload\n>" )
 os.system( "twine upload dist/*" )
 
 # 在 %USERPROFILE% 创建 .pypirc 文件

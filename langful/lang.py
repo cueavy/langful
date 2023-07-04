@@ -5,31 +5,29 @@ from locale import getdefaultlocale
 import json
 import os
 
-def lang_to_json( lang_file : str ) -> dict :
+def to_json( lang_file : str ) -> dict :
     """
     .lang -> .json
     """
     ret = {}
     for i in lang_file.split( "\n" ) :
-        text = i.split("#")[0]
+        text = i.split( "#" )[ 0 ]
         line = "".join( text.split( maxsplit = 2 ) )
         if line :
-            key_value = i.split( "=" , 1 )
+            key_value = line.split( "=" , 1 )
             if len( key_value ) == 2 :
-                key , value = i.split( "=" , 1 )
+                key , value = key_value
             else :
                 raise SyntaxError( "can't to read .lang file" )
             ret[ key ] = value
     return ret
 
-def json_to_lang( dict_file : dict ) -> str :
+def to_lang( dict_file : dict ) -> str :
     """
     .json -> .lang
     """
     ret = ""
     for key , value in dict_file.items() :
-        if not ( isinstance( value , int ) or isinstance( value , str ) ) :
-            raise TypeError( f"can't use type '{ type( value ) }'" )
         ret += f"{ key } = { value }\n"
     return ret
 
@@ -39,91 +37,115 @@ class lang :
     """
 
     def __setitem__( self , key , value ) -> None :
+        """
+        set
+        """
         self.set( key , value )
 
     def __delitem__( self , key ) -> None :
+        """
+        remove
+        """
         self.remove( key )
 
     def __getitem__( self , key ) -> str :
+        """
+        get
+        """
         return self.get( key )
 
     def __call__( self ) -> None :
+        """
+        init
+        """
         self.init()
 
     def __len__( self ) -> int :
         return len( self.languages )
 
-    def __init__( self , lang_dir : str | dict | bool = "lang" , default_locale : str = "en_us" , json_first : bool = True ) -> None :
+    def __init__( self , lang_dir : str | dict = "lang" , default_locale : str = "en_us" , json_first : bool = True ) -> None :
         """
         lang_dir: lang files dir, if use dict to set that to a dictionary or False
         default_locale: default locale
         json_first: is load json file first
         """
-        system_locale = self.system_locale_get()
+        self.system_locale = self.system_locale_get()
         self.default_locale = default_locale
-        self.system_locale = system_locale
         self.json_first = json_first
         self.replace_letter = "%"
         self.lang_dir = lang_dir
         self.is_file = False
         self.languages = {}
         self.types = {}
-        if isinstance( lang_dir , str ) :
-            self.init()
-        elif isinstance( lang_dir , dict ) :
-            self.init_dict( lang_dir )
+        self.init()
 
-    def init( self ) -> None :
+    def init( self ) :
+        """
+        init
+        """
+        if isinstance( self.lang_dir , str ) :
+            self.init_file( self.lang_dir )
+        elif isinstance( self.lang_dir , dict ) :
+            self.init_dict( self.lang_dir )
+
+    def init_file( self , path ) -> None :
         """
         init by a directory
         """
-        path = self.lang_dir
         self.is_file = True
-        if not isinstance( self.json_first , bool ) :
-            self.json_first = True
-        if self.json_first :
-            loads = [ ".json" , ".lang" ]
-        else :
-            loads = [ ".lang" , ".json" ]
-        if self.is_file :
-            if not os.path.exists( path ) :
-                raise FileNotFoundError( f"can't find '{ os.path.abspath( path ) }'" )
-            files = []
-            for i in os.listdir( path ) :
-                name , suffix = os.path.splitext( i )
-                if ( suffix in loads ) and ( ( suffix == loads[0] ) or ( name + loads[0] not in files ) ) :
-                    files.append( i )
-                    with open( os.path.join( path , i ) , encoding = "utf-8" ) as file :
-                        if suffix == ".json" :
-                            try :
-                                data = json.load( file )
-                            except json.decoder.JSONDecodeError :
-                                raise SyntaxError( "can't to load .json file" )
-                        elif suffix == ".lang" :
-                            data = lang_to_json( file.read() )
-                        else :
-                            continue
-                    self.languages[ name ] = data
-                    self.types[ name ] = suffix
+        if not os.path.exists( path ) :
+            raise FileNotFoundError( f"can't find '{ os.path.abspath( path ) }'" )
+        loads = [ [ ".lang" , ".json" ] , [ ".json" , ".lang" ] ][ self.json_first ]
+        files = []
+        for i in os.listdir( path ) :
+            name , suffix = os.path.splitext( i )
+            if ( suffix in loads ) and ( ( suffix == loads[ 0 ] ) or ( name + loads[ 0 ] not in files ) ) :
+                files.append( i )
+                with open( os.path.join( path , i ) , "r" , encoding = "utf-8" ) as file :
+                    if suffix == ".json" :
+                        try :
+                            data = json.load( file )
+                        except json.decoder.JSONDecodeError :
+                            raise SyntaxError( "can't to load .json file" )
+                    elif suffix == ".lang" :
+                        data = to_json( file.read() )
+                    else :
+                        continue
+                self.languages[ name ] = data
+                self.types[ name ] = suffix
 
-    def init_dict( self , language : dict ) -> None :
+    def init_dict( self , language : dict = None ) -> None :
         """
         init by a dictionary, so cant't to save it to the file
         """
-        if self.is_file :
-            raise TypeError( "can't init by a dictionary, because it's init by a dir" )
-        for value in language.values() :
-            if not isinstance( value , dict ) :
-                raise TypeError( f"can't use type '{ type( value ) }'" )
+        self.is_file = False
         for key in language.keys() :
             self.types[ key ] = ".json"
         self.languages = language
+        self.lang_dir = language
+
+    def to_dict( self ) :
+        """
+        set type to dict
+        """
+        self.types = { key : ".json" for key in self.types.keys() }
+        self.lang_dir = self.languages
+        self.is_file = False
+
+    def to_file( self , path ) :
+        """
+        set type to file
+        """
+        if not os.path.exists( path ) :
+            os.makedirs( path )
+        self.lang_dir = path
+        self.is_file = True
 
     def system_locale_get( self ) -> str :
         """
         get system locale
         """
-        return getdefaultlocale()[0].lower()
+        return getdefaultlocale()[ 0 ].lower()
 
     @property
     def locales( self ) -> list :
@@ -149,7 +171,7 @@ class lang :
         """
         get now language
         """
-        return self.languages[ self.locale ]
+        return self.lang_get( self.locale )
 
     @property
     def lang( self ) -> dict :
@@ -199,6 +221,12 @@ class lang :
         else :
             self.system_locale = self.system_locale_get()
 
+    def lang_get( self , locale : str ) -> dict :
+        """
+        get a lang
+        """
+        return self.languages[ locale ]
+
     def lang_set( self , locale : str , value : dict = {} , suffix : str = ".json" ) -> None :
         """
         set a new lang
@@ -234,29 +262,29 @@ class lang :
         locale = self.locale_get( locale )
         del self.languages[ locale ][ key ]
 
-    def save( self ) -> None :
+    def save( self , separators : list = [ " ," , ": " ] ) -> None :
         """
         save file when is_file variable is true, else raise the error
         """
-        if self.is_file :
+        if isinstance( self.lang_dir , str ) :
             for key , value in self.languages.items() :
                 suffix = self.types[ key ]
-                with open( os.path.join( self.lang_dir , key , suffix ) , "w" , encoding = "utf-8" ) as file :
+                with open( os.path.join( self.lang_dir , key + suffix ) , "w" , encoding = "utf-8" ) as file :
                     if suffix == ".json" :
-                        file.write( json.dumps( value , indent = 4 , separators = ( " ," , ": " ) , ensure_ascii = False ) )
+                        file.write( json.dumps( value , indent = 4 , separators = separators , ensure_ascii = False ) )
                     elif suffix == ".lang" :
-                        file.write( json_to_lang( value ) )
-        else :
-            raise TypeError( "can't to save, because it's not a file" )
+                        file.write( to_lang( value ) )
+        return self.languages
 
-    def save_dict( self ) -> dict :
+    def merge( self , locale : str = None , args : list = [] ) -> dict :
         """
-        save dict. in fact, it just return the "languages" variable
+        merge
         """
-        if not self.is_file :
-            return self.languages
-        else :
-            raise TypeError( "can't to save, because it's not a dict" )
+        ret = self.lang_get( self.locale_get( locale ) )
+        for i in args :
+            for key , value in self.lang_get( i ).items() :
+                ret[ key ] = value
+        return ret
 
     def replace( self , key : str = None , args : list | str = None , locale : str = None , replace_letter : str = None ) -> str :
         """
