@@ -241,21 +241,27 @@ class lang :
         del self.languages[ locale ]
         del self.types[ locale ]
 
-    def get( self , key : str | int , locale : str = None ) -> str :
+    def lang_merge( self , to : str , locale : str = None , args : str | list = [] ) -> None :
+        """
+        merge to a locale
+        """
+        self.lang_set( to , self.merge( locale , args ) )
+
+    def get( self , key : str , locale : str = None ) -> str :
         """
         get the key by a locale dictionary
         """
         locale = self.locale_get( locale )
         return self.languages[ locale ][ key ]
 
-    def set( self , key : str | int , value : str , locale : str = None ) -> None :
+    def set( self , key : str , value : str , locale : str = None ) -> None :
         """
         set a value by a locale dictionary
         """
         locale = self.locale_get( locale )
         self.languages[ locale ][ key ] = value
 
-    def remove( self , key : str | int , locale : str = None ) -> None :
+    def remove( self , key : str , locale : str = None ) -> None :
         """
         remove a value by a locale dictionary
         """
@@ -276,17 +282,19 @@ class lang :
                         file.write( to_lang( value ) )
         return self.languages
 
-    def merge( self , locale : str = None , args : list = [] ) -> dict :
+    def merge( self , locale : str = None , args : str | list = [] ) -> dict :
         """
         merge
         """
+        if isinstance( args , str ) :
+            args = [ args ]
         ret = self.lang_get( self.locale_get( locale ) )
         for i in args :
             for key , value in self.lang_get( i ).items() :
                 ret[ key ] = value
         return ret
 
-    def replace( self , key : str = None , args : list | str = None , locale : str = None , replace_letter : str = None ) -> str :
+    def replace( self , key : str = None , args : str | list  = None , locale : str = None , replace_letter : str = None ) -> str :
         """
         replace
         """
