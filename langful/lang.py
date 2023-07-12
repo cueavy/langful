@@ -4,22 +4,23 @@
 from locale import getdefaultlocale
 import json
 import os
+import re
 
 def to_json( lang_file : str ) -> dict :
     """
     .lang -> .json
     """
     ret = {}
-    for i in lang_file.split( "\n" ) :
-        text = i.split( "#" )[ 0 ]
-        line = "".join( text.split( maxsplit = 2 ) )
-        if line :
-            key_value = line.split( "=" , 1 )
-            if len( key_value ) == 2 :
-                key , value = key_value
-            else :
-                raise SyntaxError( "can't to read .lang file" )
-            ret[ key ] = value
+    for line in lang_file.split( "\n" ) :
+        text = re.split( "([^#^=^\\s]+|)(\\s+=\\s+|\\s+=|=\\s+|=|)([^#^\\n]+|)" , line )
+        n = 0
+        for s in text :
+            if "=" in s :
+                break
+            n += 1
+        else :
+            continue
+        ret[ "".join( text[:n] ) ] = "".join( text[n + 1:] )
     return ret
 
 def to_lang( dict_file : dict ) -> str :
