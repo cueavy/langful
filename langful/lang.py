@@ -1,15 +1,15 @@
 """
 # lang
 """
-from locale import getdefaultlocale
+
 import json
 import os
-import re
 
 def to_json( lang_file : str ) -> dict :
     """
     .lang -> .json
     """
+    import re
     ret = {}
     for line in lang_file.split( "\n" ) :
         text = re.split( "([^#^=^\\s]+|)(\\s+=\\s+|\\s+=|=\\s+|=|)([^#^\\n]+|)" , line )
@@ -31,6 +31,20 @@ def to_lang( dict_file : dict ) -> str :
     for key , value in dict_file.items() :
         ret += f"{ key } = { value }\n"
     return ret
+
+def getdefaultlocale() -> str :
+    """
+    getdefaultlocale will deprecated so use this
+    """
+    import locale
+    import sys
+    if sys.platform == "win32" :
+        code = __import__( "_locale" )._getdefaultlocale()[ 0 ]
+        if code[ :2 ] == "0x" :
+            code = locale.windows_locale[ code ]
+    else :
+        code = locale.getlocale()[ 0 ]
+    return code.replace( "-" , "_" ).lower()
 
 class lang :
     """
@@ -70,11 +84,12 @@ class lang :
         default_locale: default locale
         json_first: is load json file first
         """
-        self.system_locale = self.system_locale_get()
+        self.system_locale = getdefaultlocale()
         self.default_locale = default_locale
         self.json_first = json_first
         self.replace_letter = "%"
         self.lang_dir = lang_dir
+        self.use_locale = None
         self.is_file = False
         self.languages = {}
         self.types = {}
@@ -142,12 +157,6 @@ class lang :
         self.lang_dir = path
         self.is_file = True
 
-    def system_locale_get( self ) -> str :
-        """
-        get system locale
-        """
-        return getdefaultlocale()[ 0 ].lower()
-
     @property
     def locales( self ) -> list :
         """
@@ -160,7 +169,9 @@ class lang :
         """
         choose locale
         """
-        if self.system_locale in self.locales :
+        if self.use_locale and self.use_locale in self.locales :
+            return self.use_locale
+        elif self.system_locale in self.locales :
             return self.system_locale
         elif self.default_locale in self.locales :
             return self.default_locale
@@ -217,10 +228,9 @@ class lang :
         """
         if give a locale then set that, else reset it
         """
-        if locale != None :
-            self.system_locale = locale
-        else :
-            self.system_locale = self.system_locale_get()
+        if locale and locale not in self.locales :
+            raise KeyError( f"no such locale '{ locale }'" )
+        self.use_locale = locale
 
     def lang_get( self , locale : str ) -> dict :
         """

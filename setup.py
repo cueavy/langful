@@ -4,7 +4,8 @@ import sys
 import os
 
 # 版本
-version = "0.35"
+name = "langful"
+version = "0.36"
 
 # 更新与导入
 pip.main( [ "install" , "--upgrade" , "setuptools" , "wheel" ] )
@@ -13,12 +14,12 @@ import setuptools
 # 清除无用目录
 if os.path.exists( "build" ) :
     rmtree( "build" )
-if os.path.exists( "langful.egg-info" ) :
-    rmtree( "langful.egg-info" )
+if os.path.exists( f"{ name }.egg-info" ) :
+    rmtree( f"{ name }.egg-info" )
 if os.path.exists( "dist" ) :
     rmtree( "dist" )
-if os.path.exists( os.path.join( "langful" , "__pycache__" ) ) :
-    rmtree( os.path.join( "langful" , "__pycache__" ) )
+if os.path.exists( os.path.join( f"{ name }" , "__pycache__" ) ) :
+    rmtree( os.path.join( f"{ name }" , "__pycache__" ) )
 
 # 参数
 sys.argv = [ "setup.py" , "bdist_wheel" ]
@@ -29,7 +30,7 @@ with open( "README.md" , "r" , encoding = "utf-8" ) as file :
 
 # 模块信息
 setuptools.setup(
-    name = "langful" ,
+    name = name ,
     version = version ,
     author = "cueavyqwp" ,
     author_email = "cueavyqwp@outlook.com" ,
@@ -48,7 +49,7 @@ setuptools.setup(
 
 # 清理
 rmtree( "build" )
-rmtree( "langful.egg-info" )
+rmtree( f"{ name }.egg-info" )
 
 # 上传pypi
 input( "pass enter to upload\n>" )
