@@ -112,24 +112,6 @@ lang.init_dict( {
 print( lang.replace( "test" , [ 33 , 3 ] ) )
 ```
 
-### replace str
-
-```python
-import langful
-lang = langful.lang( False )
-lang.init_dict( {
-    "en_us" : {
-        "hi" : "Hi" ,
-        "welcome" : "Welcome"
-    } ,
-    "zh_cn" : {
-        "hi" : "你好" ,
-        "welcome" : "欢迎"
-    }
-} )
-print(lang.replace_str( "%hi%, %welcome%!" ))
-```
-
 ### merge
 
 ```python

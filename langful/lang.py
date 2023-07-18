@@ -4,23 +4,23 @@
 
 import json
 import os
+import re
+
+__all__ = [ "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
 
 def to_json( lang_file : str ) -> dict :
     """
     .lang -> .json
     """
-    import re
     ret = {}
     for line in lang_file.split( "\n" ) :
         text = re.split( "([^#^=^\\s]+|)(\\s+=\\s+|\\s+=|=\\s+|=|)([^#^\\n]+|)" , line )
-        n = 0
-        for s in text :
-            if "=" in s :
+        index = 0
+        for value in text :
+            if "=" in value :
+                ret[ "".join( text[ :index ] ) ] = "".join( text[ index + 1: ] )
                 break
-            n += 1
-        else :
-            continue
-        ret[ "".join( text[:n] ) ] = "".join( text[n + 1:] )
+            index += 1
     return ret
 
 def to_lang( dict_file : dict ) -> str :
@@ -41,7 +41,7 @@ def getdefaultlocale() -> str :
     if sys.platform == "win32" :
         code = __import__( "_locale" )._getdefaultlocale()[ 0 ]
         if code[ :2 ] == "0x" :
-            code = locale.windows_locale[ code ]
+            code = locale.windows_locale[ int( code , 0 ) ]
     else :
         code = locale.getlocale()[ 0 ]
     return code.replace( "-" , "_" ).lower()
@@ -112,12 +112,10 @@ class lang :
         if not os.path.exists( path ) :
             raise FileNotFoundError( f"can't find '{ os.path.abspath( path ) }'" )
         loads = [ [ ".lang" , ".json" ] , [ ".json" , ".lang" ] ][ self.json_first ]
-        files = []
-        for i in os.listdir( path ) :
-            name , suffix = os.path.splitext( i )
-            if ( suffix in loads ) and ( ( suffix == loads[ 0 ] ) or ( name + loads[ 0 ] not in files ) ) :
-                files.append( i )
-                with open( os.path.join( path , i ) , "r" , encoding = "utf-8" ) as file :
+        for lang_file in os.listdir( path ) :
+            name , suffix = os.path.splitext( lang_file )
+            if ( suffix in loads ) and ( ( suffix == loads[ 0 ] ) or ( suffix not in self.locales ) ) :
+                with open( os.path.join( path , lang_file ) , "r" , encoding = "utf-8" ) as file :
                     if suffix == ".json" :
                         try :
                             data = json.load( file )
@@ -169,14 +167,10 @@ class lang :
         """
         choose locale
         """
-        if self.use_locale and self.use_locale in self.locales :
-            return self.use_locale
-        elif self.system_locale in self.locales :
-            return self.system_locale
-        elif self.default_locale in self.locales :
-            return self.default_locale
-        else :
-            raise KeyError( f"no such locale '{ self.system_locale }' or '{ self.default_locale }'" )
+        for locale in [ self.use_locale , self.system_locale , self.default_locale ] :
+            if locale and locale in self.locales :
+                return locale
+        raise KeyError( f"no such locale '{ self.system_locale }' or '{ self.default_locale }'" )
 
     @property
     def language( self ) -> dict :
@@ -206,15 +200,6 @@ class lang :
         """
         return self.types[ self.locale ]
 
-    def locale_get( self , locale : str = None ) -> str :
-        """
-        get locale, usually use in function
-        """
-        if locale :
-            return locale
-        else :
-            return self.locale
-
     def replace_letter_get( self , replace_letter : str = None ) -> str :
         """
         get replace letter, usually use in function
@@ -223,6 +208,15 @@ class lang :
             return replace_letter
         else :
             return self.replace_letter
+
+    def locale_get( self , locale : str = None ) -> str :
+        """
+        get locale, usually use in function
+        """
+        if locale :
+            return locale
+        else :
+            return self.locale
 
     def locale_set( self , locale : str = None  ) -> None :
         """
@@ -240,14 +234,14 @@ class lang :
 
     def lang_set( self , locale : str , value : dict = {} , suffix : str = ".json" ) -> None :
         """
-        set a new lang
+        set a lang
         """
         self.languages[ locale ] = value
         self.types[ locale ] = suffix
 
-    def lang_del( self , locale : str ) -> None :
+    def lang_remove( self , locale : str ) -> None :
         """
-        del a lang
+        remove a lang
         """
         del self.languages[ locale ]
         del self.types[ locale ]
@@ -279,9 +273,21 @@ class lang :
         locale = self.locale_get( locale )
         del self.languages[ locale ][ key ]
 
-    def save( self , separators : list = [ " ," , ": " ] ) -> None :
+    def merge( self , locale : str = None , args : str | list = [] ) -> dict :
         """
-        save file when is_file variable is true, else raise the error
+        merge
+        """
+        if isinstance( args , str ) :
+            args = [ args ]
+        ret = self.lang_get( self.locale_get( locale ) )
+        for locale_key in args :
+            for key , value in self.lang_get( locale_key ).items() :
+                ret[ key ] = value
+        return ret
+
+    def save( self , separators : list = [ " ," , ": " ] ) -> dict :
+        """
+        save file when is_file variable is true
         """
         if isinstance( self.lang_dir , str ) :
             for key , value in self.languages.items() :
@@ -293,55 +299,21 @@ class lang :
                         file.write( to_lang( value ) )
         return self.languages
 
-    def merge( self , locale : str = None , args : str | list = [] ) -> dict :
-        """
-        merge
-        """
-        if isinstance( args , str ) :
-            args = [ args ]
-        ret = self.lang_get( self.locale_get( locale ) )
-        for i in args :
-            for key , value in self.lang_get( i ).items() :
-                ret[ key ] = value
-        return ret
-
     def replace( self , key : str = None , args : str | list  = None , locale : str = None , replace_letter : str = None ) -> str :
         """
         replace
         """
         replace_letter = self.replace_letter_get( replace_letter )
         locale = self.locale_get( locale )
-        text = self.get( key , locale ).split( replace_letter )
         if isinstance( args , str ) :
             args = [ args ]
+        index = 0
         ret = ""
-        p = 0
-        for i in text :
-            ret += i
-            if ( p + 1 ) < len( text ) :
-                if p < len( args ) :
-                    ret += str( args[ p ] )
-                else :
-                    ret += str( args[ -1 ] )
-                p += 1
-        return ret
-
-    def replace_str( self , text : str , locale : str = None , replace_letter : str = None ) -> str :
-        """
-        replace by str
-        """
-        locale = self.locale_get( locale )
-        replace_letter = self.replace_letter_get( replace_letter )
-        text = text.split( replace_letter )
-        ret = ""
-        p = 0
-        for i in text :
-            if p % 2 :
-                if i :
-                    ret += self.get( i )
-                else :
-                    ret += replace_letter
+        for text in re.split( f"({ replace_letter }+)" , self.get( key , locale ) ) :
+            if text != replace_letter :
+                ret += text
             else :
-                ret += i
-            p += 1
+                ret += text.replace( replace_letter , str( args[ index ] ) )
+                if index + 1 < len( args ) :
+                    index += 1
         return ret
