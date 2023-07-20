@@ -51,7 +51,9 @@ zh_cn
 
 .lang
 
-> 若需要高亮 请安装 `vscode-langful` : [GitHub](https://github.com/cueavy/vscode-langful) [VSCode](https://marketplace.visualstudio.com/items?itemName=cueavyqwp.langful)
+> 若需要高亮 请安装 `vscode-langful` :
+[GitHub](https://github.com/cueavy/vscode-langful)
+[VSCode](https://marketplace.visualstudio.com/items?itemName=cueavyqwp.langful)
 
 ```
 键 = 值 # 嗨, 这是个示例
@@ -103,10 +105,9 @@ lang.init_dict( {
 
 ```python
 lang = langful.lang( False )
-lang.replace_letter = "&"
 lang.init_dict( {
     "en_us" : {
-        "test" : "&.&%"
+        "test" : "%.%\%"
     }
 } )
 print( lang.replace( "test" , [ 33 , 3 ] ) )

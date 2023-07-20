@@ -51,7 +51,9 @@ en_us
 
 .lang
 
-> if you need highlight, you can install `vscode-langful` : [GitHub](https://github.com/cueavy/vscode-langful) [VSCode](https://marketplace.visualstudio.com/items?itemName=cueavyqwp.langful)
+> if you need highlight, you can install `vscode-langful` :
+[GitHub](https://github.com/cueavy/vscode-langful)
+[VSCode](https://marketplace.visualstudio.com/items?itemName=cueavyqwp.langful)
 
 ```
 key = value # hi, this is a example
@@ -103,10 +105,9 @@ lang.init_dict( {
 
 ```python
 lang = langful.lang( False )
-lang.replace_letter = "&"
 lang.init_dict( {
     "en_us" : {
-        "test" : "&.&%"
+        "test" : "%.%\%"
     }
 } )
 print( lang.replace( "test" , [ 33 , 3 ] ) )

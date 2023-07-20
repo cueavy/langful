@@ -4,7 +4,6 @@
 
 import json
 import os
-import re
 
 __all__ = [ "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
 
@@ -12,6 +11,7 @@ def to_json( lang_file : str ) -> dict :
     """
     .lang -> .json
     """
+    import re
     ret = {}
     for line in lang_file.split( "\n" ) :
         text = re.split( "([^#^=^\\s]+|)(\\s+=\\s+|\\s+=|=\\s+|=|)([^#^\\n]+|)" , line )
@@ -31,6 +31,15 @@ def to_lang( dict_file : dict ) -> str :
     for key , value in dict_file.items() :
         ret += f"{ key } = { value }\n"
     return ret
+
+def to_list( args : str | list ) -> list :
+    """
+    only use it in this file don't add it in __all__ list
+    """
+    if isinstance( args , list ) :
+        return args
+    else :
+        return [ args ]
 
 def getdefaultlocale() -> str :
     """
@@ -277,8 +286,7 @@ class lang :
         """
         merge
         """
-        if isinstance( args , str ) :
-            args = [ args ]
+        args = to_list( args )
         ret = self.lang_get( self.locale_get( locale ) )
         for locale_key in args :
             for key , value in self.lang_get( locale_key ).items() :
@@ -289,12 +297,12 @@ class lang :
         """
         save file when is_file variable is true
         """
-        if isinstance( self.lang_dir , str ) :
+        if self.is_file :
             for key , value in self.languages.items() :
                 suffix = self.types[ key ]
                 with open( os.path.join( self.lang_dir , key + suffix ) , "w" , encoding = "utf-8" ) as file :
                     if suffix == ".json" :
-                        file.write( json.dumps( value , indent = 4 , separators = separators , ensure_ascii = False ) )
+                        json.dump( value , file , indent = 4 , separators = separators , ensure_ascii = False )
                     elif suffix == ".lang" :
                         file.write( to_lang( value ) )
         return self.languages
@@ -305,15 +313,16 @@ class lang :
         """
         replace_letter = self.replace_letter_get( replace_letter )
         locale = self.locale_get( locale )
-        if isinstance( args , str ) :
-            args = [ args ]
+        args = to_list( args )
         index = 0
         ret = ""
-        for text in re.split( f"({ replace_letter }+)" , self.get( key , locale ) ) :
-            if text != replace_letter :
-                ret += text
+        for text in self.get( key , locale ) :
+            if text == replace_letter :
+                if len( ret ) and ret[ -1 ] == "\\" :
+                    ret = ret[ : -1 ] + replace_letter
+                else :
+                    ret += str( args[ index ] )
+                    index += index < len( args ) - 1
             else :
-                ret += text.replace( replace_letter , str( args[ index ] ) )
-                if index + 1 < len( args ) :
-                    index += 1
+                ret += text
         return ret
