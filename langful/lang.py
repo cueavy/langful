@@ -18,7 +18,7 @@ def to_json( lang_file : str ) -> dict :
         index = 0
         for value in text :
             if "=" in value :
-                ret[ "".join( text[ :index ] ) ] = "".join( text[ index + 1: ] )
+                ret[ "".join( text[ :index ] ) ] = "".join( text[ index + 1 : ] )
                 break
             index += 1
     return ret
@@ -60,32 +60,92 @@ class lang :
     # lang
     """
 
+    @property
+    def locales( self ) -> list :
+        """
+        locales
+        """
+        return list( self.types.keys() )
+
+    @property
+    def locale( self ) -> str :
+        """
+        choose locale
+        """
+        for locale in [ self.use_locale , self.system_locale , self.default_locale ] :
+            if locale and locale in self.locales :
+                return locale
+        raise KeyError( f"no such locale '{ self.system_locale }' or '{ self.default_locale }'" )
+
+    @property
+    def language( self ) -> dict :
+        """
+        get now language
+        """
+        return self.lang_get( self.locale )
+
+    @property
+    def lang( self ) -> dict :
+        """
+        same to language function
+        """
+        return self.language
+
+    @property
+    def langs( self ) -> dict :
+        """
+        same to languages variable
+        """
+        return self.languages
+
+    @property
+    def type( self ) -> str :
+        """
+        get type, ".json" or ".lang"
+        """
+        return self.types[ self.locale ]
+
+    def __getitem__( self , key ) -> str :
+        """
+        get the value in language variable
+        """
+        return self.get( key )
+
     def __setitem__( self , key , value ) -> None :
         """
-        set
+        set the value in languages[ locale ]
         """
         self.set( key , value )
 
     def __delitem__( self , key ) -> None :
         """
-        remove
+        remove the value in languages[ locale ]
         """
         self.remove( key )
 
-    def __getitem__( self , key ) -> str :
-        """
-        get
-        """
-        return self.get( key )
-
     def __call__( self ) -> None :
         """
-        init
+        init function
         """
         self.init()
 
+    def __str__( self ) -> str :
+        """
+        to string
+        """
+        return json.dumps( self.languages , indent = 4 , ensure_ascii = False , separators = self.separators )
+
     def __len__( self ) -> int :
-        return len( self.languages )
+        """
+        how many item in language variable
+        """
+        return len( self.language )
+
+    def __bool__( self ) -> bool :
+        """
+        is system locale in languages dictionary
+        """
+        return self.system_locale in self.languages
 
     def __init__( self , lang_dir : str | dict = "lang" , default_locale : str = "en_us" , json_first : bool = True ) -> None :
         """
@@ -95,6 +155,7 @@ class lang :
         """
         self.system_locale = getdefaultlocale()
         self.default_locale = default_locale
+        self.separators = [ " ," , ": " ]
         self.json_first = json_first
         self.replace_letter = "%"
         self.lang_dir = lang_dir
@@ -163,60 +224,6 @@ class lang :
             os.makedirs( path )
         self.lang_dir = path
         self.is_file = True
-
-    @property
-    def locales( self ) -> list :
-        """
-        locales
-        """
-        return list( self.types.keys() )
-
-    @property
-    def locale( self ) -> str :
-        """
-        choose locale
-        """
-        for locale in [ self.use_locale , self.system_locale , self.default_locale ] :
-            if locale and locale in self.locales :
-                return locale
-        raise KeyError( f"no such locale '{ self.system_locale }' or '{ self.default_locale }'" )
-
-    @property
-    def language( self ) -> dict :
-        """
-        get now language
-        """
-        return self.lang_get( self.locale )
-
-    @property
-    def lang( self ) -> dict :
-        """
-        same to language function
-        """
-        return self.language
-
-    @property
-    def langs( self ) -> dict :
-        """
-        same to languages variable
-        """
-        return self.languages
-
-    @property
-    def type( self ) -> str :
-        """
-        get type, ".json" or ".lang"
-        """
-        return self.types[ self.locale ]
-
-    def replace_letter_get( self , replace_letter : str = None ) -> str :
-        """
-        get replace letter, usually use in function
-        """
-        if replace_letter :
-            return replace_letter
-        else :
-            return self.replace_letter
 
     def locale_get( self , locale : str = None ) -> str :
         """
@@ -293,7 +300,7 @@ class lang :
                 ret[ key ] = value
         return ret
 
-    def save( self , separators : list = [ " ," , ": " ] ) -> dict :
+    def save( self ) -> dict :
         """
         save file when is_file variable is true
         """
@@ -302,16 +309,16 @@ class lang :
                 suffix = self.types[ key ]
                 with open( os.path.join( self.lang_dir , key + suffix ) , "w" , encoding = "utf-8" ) as file :
                     if suffix == ".json" :
-                        json.dump( value , file , indent = 4 , separators = separators , ensure_ascii = False )
+                        json.dump( value , file , indent = 4 , separators = self.separators , ensure_ascii = False )
                     elif suffix == ".lang" :
                         file.write( to_lang( value ) )
         return self.languages
 
-    def replace( self , key : str = None , args : str | list  = None , locale : str = None , replace_letter : str = None ) -> str :
+    def replace( self , key : str = None , args : str | list  = None , locale : str = None ) -> str :
         """
         replace
         """
-        replace_letter = self.replace_letter_get( replace_letter )
+        replace_letter = self.replace_letter
         locale = self.locale_get( locale )
         args = to_list( args )
         index = 0

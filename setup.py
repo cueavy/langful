@@ -5,10 +5,10 @@ import os
 
 # 版本
 name = "langful"
-version = "0.38"
+version = "0.39"
 
 # 更新与导入
-pip.main( [ "install" , "--upgrade" , "setuptools" , "wheel" ] )
+pip.main( [ "install" , "--upgrade" , "setuptools" , "wheel" , "twine" ] )
 import setuptools
 
 # 清除无用目录
@@ -44,7 +44,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License" ,
         "Operating System :: OS Independent" ,
     ] ,
-    python_requires = '>= 3.6' ,
+    python_requires = '>= 3.9' ,
 )
 
 # 清理

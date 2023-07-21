@@ -4,7 +4,7 @@
         <img alt = "PyPI version" src = "https://img.shields.io/pypi/v/langful?color=blue" >
     </a>
     <a href = "https://www.python.org" >
-        <img alt = "Python version" src = "https://img.shields.io/badge/python-3.6+-blue" >
+        <img alt = "Python version" src = "https://img.shields.io/badge/python-3.9+-blue" >
     </a>
     <a href = "https://opensource.org/license/mit" >
         <img alt = "license" src = "https://img.shields.io/badge/license-MIT-blue" >
