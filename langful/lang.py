@@ -45,14 +45,15 @@ def getdefaultlocale() -> str :
     """
     getdefaultlocale will deprecated so use this
     """
-    import locale
-    import sys
-    if sys.platform == "win32" :
+    from locale import getlocale
+    from sys import platform
+    if platform == "win32" :
         code = __import__( "_locale" )._getdefaultlocale()[ 0 ]
-        if code[ :2 ] == "0x" :
-            code = locale.windows_locale[ int( code , 0 ) ]
+        if code and code[ : 2 ] == "0x" :
+            from locale import windows_locale
+            code = windows_locale.get( int( code , 0 ) )
     else :
-        code = locale.getlocale()[ 0 ]
+        code = getlocale()[ 0 ]
     return code.replace( "-" , "_" ).lower()
 
 class lang :

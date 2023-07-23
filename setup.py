@@ -5,7 +5,7 @@ import os
 
 # 版本
 name = "langful"
-version = "0.39"
+version = "0.40"
 
 # 更新与导入
 pip.main( [ "install" , "--upgrade" , "setuptools" , "wheel" , "twine" ] )
