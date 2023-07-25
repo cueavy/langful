@@ -7,39 +7,22 @@ import os
 
 __all__ = [ "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
 
-def to_json( lang_file : str ) -> dict :
-    """
-    .lang -> .json
-    """
-    import re
+def to_json( lang_file : str ) -> dict[ str , str ] :
+    from re import split
     ret = {}
     for line in lang_file.split( "\n" ) :
-        text = re.split( "([^#^=^\\s]+|)(\\s+=\\s+|\\s+=|=\\s+|=|)([^#^\\n]+|)" , line )
-        index = 0
-        for value in text :
-            if "=" in value :
-                ret[ "".join( text[ :index ] ) ] = "".join( text[ index + 1 : ] )
-                break
-            index += 1
+        try :
+            key , value = split( "\s=\s" , line.split( "#" )[ 0 ] , 1 )
+            ret[ key ] = value
+        except ValueError :
+            continue
     return ret
 
 def to_lang( dict_file : dict ) -> str :
-    """
-    .json -> .lang
-    """
     ret = ""
     for key , value in dict_file.items() :
         ret += f"{ key } = { value }\n"
     return ret
-
-def to_list( args : str | list ) -> list :
-    """
-    only use it in this file don't add it in __all__ list
-    """
-    if isinstance( args , list ) :
-        return args
-    else :
-        return [ args ]
 
 def getdefaultlocale() -> str :
     """
@@ -57,96 +40,63 @@ def getdefaultlocale() -> str :
     return code.replace( "-" , "_" ).lower()
 
 class lang :
-    """
-    # lang
-    """
 
-    @property
-    def locales( self ) -> list :
-        """
-        locales
-        """
-        return list( self.types.keys() )
+    system_locale = getdefaultlocale()
+    __slots__ = [
+        "default_locale" ,
+        "replace_letter" ,
+        "separators" ,
+        "json_first" ,
+        "use_locale" ,
+        "languages" ,
+        "lang_dir" ,
+        "is_file" ,
+        "types"
+        ]
 
     @property
     def locale( self ) -> str :
-        """
-        choose locale
-        """
         for locale in [ self.use_locale , self.system_locale , self.default_locale ] :
             if locale and locale in self.locales :
                 return locale
         raise KeyError( f"no such locale '{ self.system_locale }' or '{ self.default_locale }'" )
 
     @property
-    def language( self ) -> dict :
-        """
-        get now language
-        """
+    def locales( self ) -> list[ str ] :
+        return list( self.types.keys() )
+
+    @property
+    def language( self ) -> dict[ str , str ] :
         return self.lang_get( self.locale )
 
     @property
-    def lang( self ) -> dict :
-        """
-        same to language function
-        """
+    def lang( self ) -> dict[ str , str ] :
         return self.language
 
     @property
-    def langs( self ) -> dict :
-        """
-        same to languages variable
-        """
+    def langs( self ) -> dict[ str , str ] :
         return self.languages
 
-    @property
-    def type( self ) -> str :
-        """
-        get type, ".json" or ".lang"
-        """
-        return self.types[ self.locale ]
-
     def __getitem__( self , key ) -> str :
-        """
-        get the value in language variable
-        """
         return self.get( key )
 
     def __setitem__( self , key , value ) -> None :
-        """
-        set the value in languages[ locale ]
-        """
         self.set( key , value )
 
     def __delitem__( self , key ) -> None :
-        """
-        remove the value in languages[ locale ]
-        """
         self.remove( key )
 
-    def __call__( self ) -> None :
-        """
-        init function
-        """
-        self.init()
-
     def __str__( self ) -> str :
-        """
-        to string
-        """
         return json.dumps( self.languages , indent = 4 , ensure_ascii = False , separators = self.separators )
 
     def __len__( self ) -> int :
-        """
-        how many item in language variable
-        """
         return len( self.language )
 
     def __bool__( self ) -> bool :
-        """
-        is system locale in languages dictionary
-        """
         return self.system_locale in self.languages
+
+    def __call__( self ) -> None :
+        self.init()
 
     def __init__( self , lang_dir : str | dict = "lang" , default_locale : str = "en_us" , json_first : bool = True ) -> None :
         """
@@ -154,7 +104,6 @@ class lang :
         default_locale: default locale
         json_first: is load json file first
         """
-        self.system_locale = getdefaultlocale()
         self.default_locale = default_locale
         self.separators = [ " ," , ": " ]
         self.json_first = json_first
@@ -167,9 +116,6 @@ class lang :
         self.init()
 
     def init( self ) :
-        """
-        init
-        """
         if isinstance( self.lang_dir , str ) :
             self.init_file( self.lang_dir )
         elif isinstance( self.lang_dir , dict ) :
@@ -210,101 +156,61 @@ class lang :
         self.lang_dir = language
 
     def to_dict( self ) :
-        """
-        set type to dict
-        """
         self.types = { key : ".json" for key in self.types.keys() }
         self.lang_dir = self.languages
         self.is_file = False
 
     def to_file( self , path ) :
-        """
-        set type to file
-        """
         if not os.path.exists( path ) :
             os.makedirs( path )
         self.lang_dir = path
         self.is_file = True
 
     def locale_get( self , locale : str = None ) -> str :
-        """
-        get locale, usually use in function
-        """
         if locale :
             return locale
         else :
             return self.locale
 
     def locale_set( self , locale : str = None  ) -> None :
-        """
-        if give a locale then set that, else reset it
-        """
         if locale and locale not in self.locales :
             raise KeyError( f"no such locale '{ locale }'" )
         self.use_locale = locale
 
-    def lang_get( self , locale : str ) -> dict :
-        """
-        get a lang
-        """
+    def lang_get( self , locale : str ) -> dict[ str , str ] :
         return self.languages[ locale ]
 
     def lang_set( self , locale : str , value : dict = {} , suffix : str = ".json" ) -> None :
-        """
-        set a lang
-        """
         self.languages[ locale ] = value
         self.types[ locale ] = suffix
 
     def lang_remove( self , locale : str ) -> None :
-        """
-        remove a lang
-        """
         del self.languages[ locale ]
         del self.types[ locale ]
 
-    def lang_merge( self , to : str , locale : str = None , args : str | list = [] ) -> None :
-        """
-        merge to a locale
-        """
+    def lang_merge( self , to : str , locale : str = None , args : str | list[ str ] = [] ) -> None :
         self.lang_set( to , self.merge( locale , args ) )
 
     def get( self , key : str , locale : str = None ) -> str :
-        """
-        get the key by a locale dictionary
-        """
         locale = self.locale_get( locale )
         return self.languages[ locale ][ key ]
 
     def set( self , key : str , value : str , locale : str = None ) -> None :
-        """
-        set a value by a locale dictionary
-        """
         locale = self.locale_get( locale )
         self.languages[ locale ][ key ] = value
 
     def remove( self , key : str , locale : str = None ) -> None :
-        """
-        remove a value by a locale dictionary
-        """
         locale = self.locale_get( locale )
         del self.languages[ locale ][ key ]
 
-    def merge( self , locale : str = None , args : str | list = [] ) -> dict :
-        """
-        merge
-        """
-        args = to_list( args )
+    def merge( self , locale : str = None , args : list[ str ] = [] ) -> dict[ str , str ] :
         ret = self.lang_get( self.locale_get( locale ) )
         for locale_key in args :
             for key , value in self.lang_get( locale_key ).items() :
                 ret[ key ] = value
         return ret
 
-    def save( self ) -> dict :
-        """
-        save file when is_file variable is true
-        """
+    def save( self ) -> dict[ str , str ] :
         if self.is_file :
             for key , value in self.languages.items() :
                 suffix = self.types[ key ]
@@ -315,13 +221,9 @@ class lang :
                         file.write( to_lang( value ) )
         return self.languages
 
-    def replace( self , key : str = None , args : str | list  = None , locale : str = None ) -> str :
-        """
-        replace
-        """
+    def replace( self , key : str = None , args : list[ str ] = None , locale : str = None ) -> str :
         replace_letter = self.replace_letter
         locale = self.locale_get( locale )
-        args = to_list( args )
         index = 0
         ret = ""
         for text in self.get( key , locale ) :
