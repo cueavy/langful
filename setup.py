@@ -4,7 +4,7 @@ import sys
 import os
 
 name = "langful"
-version = "0.39b"
+version = "0.41"
 
 pip.main( [ "install" , "--upgrade" , "setuptools" , "wheel" , "twine" ] )
 import setuptools

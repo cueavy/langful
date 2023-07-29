@@ -79,6 +79,7 @@ then you can put file at there :
 * * en_us.json
 * * zh_cn.lang
 * * zh_cn.json
+* * ...
 
 or use other directory name and set `langful.lang( "directory name" )`
 
@@ -86,8 +87,7 @@ or use other directory name and set `langful.lang( "directory name" )`
 
 ```python
 import langful
-lang = langful.lang( False )
-lang.init_dict( {
+lang = langful.lang( {
     "en_us" : {
         "hi" : "Hi" ,
         "welcome" : "Welcome"
@@ -104,8 +104,7 @@ lang.init_dict( {
 ### replace
 
 ```python
-lang = langful.lang( False )
-lang.init_dict( {
+lang = langful.lang( {
     "en_us" : {
         "test" : "%.%\%"
     }
@@ -117,8 +116,7 @@ print( lang.replace( "test" , [ 33 , 3 ] ) )
 
 ```python
 import langful
-lang = langful.lang( False )
-lang.init_dict( {
+lang = langful.lang( {
     "en_us" : {
         "hi" : "Hi" ,
         "welcome" : "Welcome"

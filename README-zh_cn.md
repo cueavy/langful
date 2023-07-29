@@ -79,6 +79,7 @@ lang = langful.lang()
 * * en_us.json
 * * zh_cn.lang
 * * zh_cn.json
+* * ...
 
 或者设置为别的目录 并设置 `langful.lang( "目录名称" )`
 
@@ -86,8 +87,7 @@ lang = langful.lang()
 
 ```python
 import langful
-lang = langful.lang( False )
-lang.init_dict( {
+lang = langful.lang( {
     "en_us" : {
         "hi" : "Hi" ,
         "welcome" : "Welcome"
@@ -104,8 +104,7 @@ lang.init_dict( {
 ### 替换
 
 ```python
-lang = langful.lang( False )
-lang.init_dict( {
+lang = langful.lang( {
     "en_us" : {
         "test" : "%.%\%"
     }
@@ -117,8 +116,7 @@ print( lang.replace( "test" , [ 33 , 3 ] ) )
 
 ```python
 import langful
-lang = langful.lang( False )
-lang.init_dict( {
+lang = langful.lang( {
     "en_us" : {
         "hi" : "Hi" ,
         "welcome" : "Welcome"
