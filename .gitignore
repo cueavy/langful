@@ -3,7 +3,9 @@
 !dist
 !LICENSE
 !langful
+!.github
 !setup.py
+!tests.py
 !README.md
 !.gitignore
 !README-zh_cn.md
