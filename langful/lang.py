@@ -12,7 +12,7 @@ def to_json( text : str ) -> dict[ str , str ] :
     ret = {}
     for line in text.split( "\n" ) :
         try :
-            ret.update( dict( [ split( "\s=\s" , line.split( "#" )[ 0 ] , 1 ) ] ) )
+            ret.update( dict( [ split( "\\s=\\s" , line.split( "#" )[ 0 ] , 1 ) ] ) )
         except ValueError :
             continue
     return ret
