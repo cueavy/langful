@@ -7,6 +7,7 @@ name = "langful"
 version = "0.41"
 
 pip.main( [ "install" , "--upgrade" , "setuptools" , "wheel" , "twine" ] )
+
 import setuptools
 
 if os.path.exists( "build" ) :
@@ -18,10 +19,7 @@ if os.path.exists( "dist" ) :
 if os.path.exists( os.path.join( f"{ name }" , "__pycache__" ) ) :
     rmtree( os.path.join( f"{ name }" , "__pycache__" ) )
 
-if len( sys.argv ) > 1 :
-    upload = sys.argv[ -1 ] != "-noask"
-else :
-    upload = True
+upload = "-noask" not in sys.argv
 
 sys.argv = [ "setup.py" , "bdist_wheel" ]
 
