@@ -1,4 +1,4 @@
-name : Python application
+name : build
 
 on :
   push :
@@ -31,4 +31,4 @@ jobs :
       - name : Upload
         uses : actions/upload-artifact@v3
         with :
-          path : dist/*.whl
+          path : dist/**.whl*
