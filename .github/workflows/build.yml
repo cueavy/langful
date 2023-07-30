@@ -28,6 +28,8 @@ jobs :
       - name : Build
         run : |
           python setup.py -noask
+          ls
+          ls dist
       - name : Upload
         uses : actions/upload-artifact@v3
         with :
