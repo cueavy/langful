@@ -15,20 +15,22 @@ jobs :
     steps :
       - uses : actions/checkout@v3
       - name : Setup
-        uses : actions/setup-python@v3
+        uses : actions/setup-python@v4
         with :
-          python-version : "3.11"
+          python-version : "3.x"
       - name : Install
         run : |
           python -m pip install --upgrade pip
-          pip install pytest
+          pip install pytest pytest-cov
       - name : Test
         run : |
-          pytest tests.py
+          pytest tests.py -s --cov=myproj
       - name : Build
         run : |
           python setup.py -noask
       - name : Upload
         uses : actions/upload-artifact@v3
         with :
-          path : dist/**.whl*
+          name : langful
+          # path : dist/*.whl
+          path : dist/langful-0.41-py3-none-any.whl.whl
