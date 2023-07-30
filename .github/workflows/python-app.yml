@@ -25,9 +25,9 @@ jobs :
     - name : Test
       run : |
         pytest tests.py
-    - uses: actions/upload-artifact@v3
     - name : Build
       run : |
         python setup.py -noask
+      uses : actions/upload-artifact@v3
       with :
         path : dist
