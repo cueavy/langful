@@ -3,4 +3,5 @@ import os
 
 class Test :
 
-    pass
+    def test() :
+        pass
