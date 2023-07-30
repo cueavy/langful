@@ -1,30 +1,29 @@
-from shutil import rmtree
+import shutil
 import pip
 import sys
 import os
 
 name = "langful"
-version = "0.41"
+version = __import__( name ).__version__
 
 pip.main( [ "install" , "--upgrade" , "setuptools" , "wheel" , "twine" ] )
 
 import setuptools
 
-if os.path.exists( "build" ) :
-    rmtree( "build" )
-if os.path.exists( f"{ name }.egg-info" ) :
-    rmtree( f"{ name }.egg-info" )
-if os.path.exists( "dist" ) :
-    rmtree( "dist" )
-if os.path.exists( os.path.join( f"{ name }" , "__pycache__" ) ) :
-    rmtree( os.path.join( f"{ name }" , "__pycache__" ) )
+def remove( path : str ) -> None :
+    if os.path.exists( path ) :
+        shutil.rmtree( path )
+
+def clear() -> None :
+    remove( os.path.join( f"{ name }" , "__pycache__" ) )
+    remove( f"{ name }.egg-info" )
+    remove( "build" )
+
+remove( "dist" )
+clear()
 
 upload = "-noask" not in sys.argv
-
 sys.argv = [ "setup.py" , "bdist_wheel" ]
-
-with open( "README.md" , "r" , encoding = "utf-8" ) as file :
-    long_description = file.read()
 
 setuptools.setup(
     name = name ,
@@ -32,7 +31,7 @@ setuptools.setup(
     author = "cueavyqwp" ,
     author_email = "cueavyqwp@outlook.com" ,
     description = "Help to localization" ,
-    long_description = long_description ,
+    long_description = open( "README.md" , "r" , encoding = "utf-8" ).read() ,
     long_description_content_type = "text/markdown" ,
     url = "https://github.com/cueavy/langful" ,
     packages = setuptools.find_packages() ,
@@ -44,8 +43,7 @@ setuptools.setup(
     python_requires = '>= 3.9' ,
 )
 
-rmtree( "build" )
-rmtree( f"{ name }.egg-info" )
+clear()
 
 if upload and input( "pass enter to upload\n>" ) in [ "y" , "Y" , "yse" , "Yes" ] :
     os.system( "twine upload dist/*" )

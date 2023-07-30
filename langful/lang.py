@@ -2,10 +2,13 @@
 # lang
 """
 
+from . import errors
+
 import json
 import os
 
-__all__ = [ "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
+__all__ = [ "__version__" , "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
+__version__ = "0.41"
 
 def to_json( text : str ) -> dict[ str , str ] :
     from re import split
@@ -17,8 +20,8 @@ def to_json( text : str ) -> dict[ str , str ] :
             continue
     return ret
 
-def to_lang( text : dict ) -> str :
-    return "\n".join( [ ' = '.join( item ) for item in list( text.items() ) ] )
+def to_lang( data : dict ) -> str :
+    return "\n".join( [ ' = '.join( item ) for item in list( data.items() ) ] )
 
 def getdefaultlocale() -> str :
     """
@@ -45,7 +48,7 @@ class lang :
         for locale in [ self.locale_use , self.locale_system , self.locale_default ] :
             if locale and locale in self.locales :
                 return locale
-        raise KeyError( f"no such locale '{ self.locale_system }' or '{ self.locale_default }'" )
+        raise errors.LocaleError( f"no such locale '{ self.locale_system }' or '{ self.locale_default }'" )
 
     @property
     def locales( self ) -> list[ str ] :
@@ -102,7 +105,7 @@ class lang :
         if key in self.configs :
             self.configs[ key ] = value
         else :
-            raise KeyError( f"'{ key }' not in configs" )
+            raise errors.ConfigError( f"'{ key }' not in configs" )
 
     def init( self ) :
         if isinstance( self.path , str ) :
@@ -116,7 +119,7 @@ class lang :
         """
         loads = [ [ ".lang" , ".lang" ] , [ ".json" , ".lang" ] ][ self.configs[ "load" ] ]
         self.configs[ "file" ] = True
-        self.language = {}
+        self.languages = {}
         self.path = path
         self.types = {}
         for lang_file in os.listdir( path ) :
@@ -127,7 +130,7 @@ class lang :
                         try :
                             data = json.load( file )
                         except json.decoder.JSONDecodeError :
-                            raise SyntaxError( "can't to load .json file" )
+                            raise errors.DecodeError( "can't to load .json file" )
                     elif suffix == ".lang" :
                         data = to_json( file.read() )
                     else :
@@ -160,7 +163,7 @@ class lang :
 
     def locale_set( self , locale : str = None  ) -> None :
         if locale and locale not in self.locales :
-            raise KeyError( f"no such locale '{ locale }'" )
+            raise errors.LocaleError( f"no such locale '{ locale }'" )
         self.locale_use = locale
 
     def lang_get( self , locale : str ) -> dict[ str , str ] :
