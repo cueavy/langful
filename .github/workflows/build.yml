@@ -35,4 +35,4 @@ jobs :
         with :
           name : langful
           # path : dist/*.whl
-          path : dist/langful-0.41-py3-none-any.whl.whl
+          path : dist/langful-0.41-py3-none-any.whl
