@@ -34,5 +34,4 @@ jobs :
         uses : actions/upload-artifact@v3
         with :
           name : langful
-          # path : dist/*.whl
-          path : dist/langful-0.41-py3-none-any.whl
+          path : dist/*.whl
