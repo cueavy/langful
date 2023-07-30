@@ -18,6 +18,11 @@ if os.path.exists( "dist" ) :
 if os.path.exists( os.path.join( f"{ name }" , "__pycache__" ) ) :
     rmtree( os.path.join( f"{ name }" , "__pycache__" ) )
 
+if len( sys.argv ) > 1 :
+    upload = sys.argv[ -1 ] != "-noask"
+else :
+    upload = True
+
 sys.argv = [ "setup.py" , "bdist_wheel" ]
 
 with open( "README.md" , "r" , encoding = "utf-8" ) as file :
@@ -44,5 +49,5 @@ setuptools.setup(
 rmtree( "build" )
 rmtree( f"{ name }.egg-info" )
 
-if input( "pass enter to upload\n>" ) in [ "y" , "Y" , "yse" , "Yes" ] :
+if upload and input( "pass enter to upload\n>" ) in [ "y" , "Y" , "yse" , "Yes" ] :
     os.system( "twine upload dist/*" )
