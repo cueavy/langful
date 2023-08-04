@@ -45,5 +45,5 @@ setuptools.setup(
 
 clear()
 
-if upload and input( "pass enter to upload\n>" ) in [ "y" , "Y" , "yse" , "Yes" ] :
+if upload and input( "pass enter to upload[Y/N]\n>" ) in [ "y" , "Y" , "yse" , "Yes" ] :
     os.system( "twine upload dist/*" )

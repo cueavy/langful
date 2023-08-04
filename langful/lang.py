@@ -8,7 +8,7 @@ import json
 import os
 
 __all__ = [ "__version__" , "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
-__version__ = "0.42"
+__version__ = "0.43"
 
 def to_json( text : str ) -> dict[ str , str ] :
     from re import split
