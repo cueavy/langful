@@ -30,7 +30,7 @@ setuptools.setup(
     version = version ,
     author = "cueavyqwp" ,
     author_email = "cueavyqwp@outlook.com" ,
-    description = "Help to localization" ,
+    description = "provides internationalization for python" ,
     long_description = open( "README.md" , "r" , encoding = "utf-8" ).read() ,
     long_description_content_type = "text/markdown" ,
     url = "https://github.com/cueavy/langful" ,

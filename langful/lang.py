@@ -107,7 +107,7 @@ class lang :
         locale_default: default locale
         load: is load json file first
         """
-        self.configs = { "separators" : [ " ," , ": " ] , "replace" : "%" , "load" : json_first , "file" : False }
+        self.configs = { "separators" : [ " ," , ": " ] , "load" : json_first , "file" : False }
         self.locale_default = locale_default
         self.locale_use = None
         self.languages = {}
@@ -229,17 +229,27 @@ class lang :
                         file.write( to_lang( value ) )
         return self.languages
 
-    def replace( self , key : str = None , args : list[ str ] = None , locale : str = None ) -> str :
-        symbol = self.configs[ "replace" ]
+    def replace( self , key : str = None , args : list[ str ] | dict[ str , str ] = None , locale : str = None ) -> str :
+        from re import compile
+        text = self.get( key , locale )
+        rx = compile( "{[^{^}]*}" )
+        items = rx.findall( text )
         index = 0
         ret = ""
-        for text in self.get( key , locale ) :
-            if text == symbol :
-                if len( ret ) and ret[ -1 ] == "\\" :
-                    ret = ret[ : -1 ] + symbol
-                else :
-                    ret += str( args[ index ] )
-                    index += index < len( args ) - 1
+        p = 0
+        for texts in rx.split( text ) :
+            if not texts :
+                continue
+            item = items[ index ]
+            item = item[ 1 : -1 ].replace( " " , "" ) if len( item ) > 2 else ""
+            if isinstance( args , ( list , tuple ) ) :
+                ret += str( args[ p ] )
+                p += 1 if p < len( args ) - 1 else 0
+            elif isinstance( args , dict ) :
+                if item in args :
+                    ret += str( args[ item ] )
             else :
-                ret += text
+                raise TypeError( f"can't use type '{ type( args ) }'" )
+            index += 1
+            ret += texts
         return ret
