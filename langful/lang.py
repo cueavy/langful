@@ -8,7 +8,7 @@ import json
 import os
 
 __all__ = [ "__version__" , "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
-__version__ = "0.41"
+__version__ = "0.42"
 
 def to_json( text : str ) -> dict[ str , str ] :
     from re import split
@@ -32,8 +32,7 @@ def getdefaultlocale() -> str :
     if platform == "win32" :
         code = __import__( "_locale" )._getdefaultlocale()[ 0 ]
         if code and code[ : 2 ] == "0x" :
-            from locale import windows_locale
-            code = windows_locale.get( int( code , 0 ) )
+            code = __import__( "locale" ).windows_locale.get( int( code , 0 ) )
     else :
         code = getlocale()[ 0 ]
     return code.replace( "-" , "_" ).lower()
@@ -41,7 +40,7 @@ def getdefaultlocale() -> str :
 class lang :
 
     locale_system = getdefaultlocale()
-    __slots__ = [ "locale_default" , "locale_use" , "languages" , "path" , "configs" , "types" ]
+    __slots__ = [ "locale_default" , "locale_use" , "languages" , "configs" , "types" , "path" ]
 
     @property
     def locale( self ) -> str :
@@ -75,17 +74,32 @@ class lang :
     def __delitem__( self , key ) -> None :
         self.remove( key )
 
+    def __contains__( self , item ) -> bool :
+        return item in self.languages
+
+    def __enter__( self ) -> dict[ str , str ] :
+        return self.languages
+
+    def __iter__( self ) -> tuple[ dict[ str , str ] ] :
+        return iter( self.keys() )
+
+    def __exit__( self , *args ) -> None :
+        self.save() if all( item is None for item in args ) else ...
+
+    def __bool__( self ) -> bool :
+        return self.locale_system in self.languages
+
+    def __repr__( self ) -> str :
+        return str( self.languages )
+
+    def __call__( self ) -> None :
+        self.init()
+
     def __str__( self ) -> str :
         return json.dumps( self.languages , indent = 4 , ensure_ascii = False , separators = self.configs[ "separators" ] )
 
     def __len__( self ) -> int :
         return len( self.language )
-
-    def __bool__( self ) -> bool :
-        return self.locale_system in self.languages
-
-    def __call__( self ) -> None :
-        self.init()
 
     def __init__( self , path : str | dict = "lang" , locale_default : str = "en_us" , json_first : bool = True ) -> None :
         """
@@ -150,13 +164,21 @@ class lang :
     def to_dict( self ) :
         self.types = { key : ".json" for key in self.languages.keys() }
         self.configs[ "file" ] = False
-        self.path = self.languages
 
     def to_file( self , path ) :
         if not os.path.exists( path ) :
             os.makedirs( path )
         self.configs[ "file" ] = True
         self.path = path
+
+    def values( self ) -> tuple[ dict[ str , str ] ] :
+        return self.languages.values()
+
+    def items( self ) -> tuple[ str , dict[ str , str ] ] :
+        return self.languages.items()
+
+    def keys( self ) -> tuple[ str ] :
+        return self.languages.keys()
 
     def locale_get( self , locale : str = None ) -> str :
         return locale if locale else self.locale
@@ -193,8 +215,7 @@ class lang :
 
     def merge( self , locale : str = None , args : list[ str ] = [] ) -> dict[ str , str ] :
         ret = self.lang_get( locale )
-        for locale_key in args :
-            ret.update( self.lang_get( locale_key ) )
+        [ ret.update( self.lang_get( key ) ) for key in args ]
         return ret
 
     def save( self ) -> dict[ str , str ] :
