@@ -90,7 +90,7 @@ class lang :
         return self.locale_system in self.languages
 
     def __repr__( self ) -> str :
-        return str( self.languages )
+        return json.dumps( self.languages )
 
     def __call__( self ) -> None :
         self.init()
@@ -99,7 +99,7 @@ class lang :
         return json.dumps( self.languages , indent = 4 , ensure_ascii = False , separators = self.configs[ "separators" ] )
 
     def __len__( self ) -> int :
-        return len( self.language )
+        return len( self.languages )
 
     def __init__( self , path : str | dict = "lang" , locale_default : str = "en_us" , json_first : bool = True ) -> None :
         """
@@ -188,15 +188,15 @@ class lang :
             raise errors.LocaleError( f"no such locale '{ locale }'" )
         self.locale_use = locale
 
-    def lang_get( self , locale : str ) -> dict[ str , str ] :
+    def lang_get( self , locale : str = None ) -> dict[ str , str ] :
         return self.languages[ self.locale_get( locale ) ]
 
-    def lang_set( self , locale : str , value : dict = {} , suffix : str = ".json" ) -> None :
+    def lang_set( self , locale : str = None , value : dict = {} , suffix : str = ".json" ) -> None :
         locale = self.locale_get( locale )
         self.languages[ locale ] = value
         self.types[ locale ] = suffix
 
-    def lang_remove( self , locale : str ) -> None :
+    def lang_remove( self , locale : str = None ) -> None :
         locale = self.locale_get( locale )
         del self.languages[ locale ]
         del self.types[ locale ]

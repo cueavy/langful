@@ -1,27 +1,63 @@
 import langful
-import os
+import json
 
-class Test :
+def test() :
 
-    locale = langful.getdefaultlocale()
-    file_json = { "zh_cn" : { "test" : "测试" , "..." : "......" } , "en_us" : { "test" : "test" , "..." : "..." } }
-    file_lang = { "zh_cn" : "hi = 嗨\n= = 1 + 1" , "en_us" : "hi = hi\n= = 1 + 2" }
-    if not os.path.exists( "langs" ) :
-        os.mkdir( "langs" )
-    lang = langful.lang( file_json )
+    assert langful.to_lang( { "k" : "v" , "=" : "= 1 + 2" } ) == "k = v\n= = = 1 + 2"
+    assert langful.to_json( """k = v\n= = = 1 + 2""" ) == { "k" : "v" , "=" : "= 1 + 2" }
+    assert "_" in langful.getdefaultlocale()
 
-    def get_file( self ) :
-        return self.file_json[ self.locale ] , self.file_lang[ self.locale ]
-    def get_lang( self , dict : dict ) :
-        return dict[ self.locale ]
+    lang = langful.lang( { "test" : { "k" : "v" } , "en_us" : { "hi" : "Hi" , "..." : "..." } } , "test" )
 
-    def test( self ) :
-        assert self.locale in [ "en_us" , "zh_cn" ]
-        assert self.lang.language == self.get_file()[ 0 ]
-        assert self.lang.languages == self.file_json
-        assert self.lang.lang == self.get_file()[ 0 ]
-        assert self.lang.langs == self.file_json
+    assert len( lang ) == 2
+    assert lang.locale_default == "test"
+    assert "test" and "en_us" in lang.types
+    assert list( iter( lang ) ) == list( lang.keys() )
 
-    def test_to_func( self ) :
-        assert langful.to_lang( self.get_file()[ 0 ] ) == self.get_lang( { "zh_cn" : "test = 测试\n... = ......" , "en_us" : "test = test\n... = ..." } )
-        assert langful.to_json( self.get_file()[ 1 ] ) == self.get_lang( { "zh_cn" : { "hi" : "嗨" , "=" : "1 + 1" } , "en_us" : { "hi" : "hi" , "=" : "1 + 2" } } )
+    lang.locale_set( "en_us" )
+    lang.lang_set( "a" )
+    assert "a" in lang.locales
+    for i in [ lang.locale , lang.locale_get() ] :
+        assert i == "en_us"
+    lang.locale_set( "test" )
+    lang.lang_remove( "a" )
+    assert lang.locale_use == "test"
+    assert "a" not in lang.locales
+
+    for i in [ lang.language , lang.lang , lang.lang_get() ] :
+        assert i == { "k" : "v" }
+    for i in [ lang.languages , lang.langs ] :
+        assert "test" and "en_us" in i
+
+    lang.lang_set( "test" )
+    assert lang.lang == {}
+
+    lang.set( "k" , "v" )
+    lang.set( "test" , "a{a a}.{b}%{}a" )
+    lang.lang_merge( "a" , "test" , [ "en_us" ] )
+    assert "k" in lang.lang and lang.lang[ "k" ] == "v"
+    assert lang.get( "k" ) == "v"
+    assert lang.replace( "test" , 3 ) == "a3.3%3a"
+    assert lang.replace( "test" , "3" ) == "a3.3%3a"
+    assert lang.replace( "test" , [ 3 ] ) == "a3.3%3a"
+    assert lang.replace( "test" , [ 33 , 3 , 4 ] ) == "a33.3%4a"
+    assert lang.replace( "test" , { "aa" : 33 , "b" : 3 , "" : 4 } ) == "a33.3%4a"
+    for i in [ lang.lang_get( "a" ) , lang.merge( "test" , [ "en_us" ] ) ] :
+        assert i == { "k" : "v" , "hi" : "Hi" , "..." : "..." , "test" : "a{a a}.{b}%{}a" }
+    lang.remove( "..." )
+    assert "..." not in lang.lang
+    lang.remove( "test" )
+    lang.lang_remove( "a" )
+    lang.lang_set( "test" , { "k" : "v" } )
+    assert json.loads( repr( lang ) ) == json.loads( str( lang ) )
+
+    lang.to_file( "langs" )
+    lang.save()
+
+    with lang as l :
+        assert l == lang.languages
+    del lang
+
+    lang = langful.lang( "langs" , "test" )
+    lang.to_dict()
+    assert not lang.configs[ "file" ]
