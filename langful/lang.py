@@ -229,27 +229,24 @@ class lang :
                         file.write( to_lang( value ) )
         return self.languages
 
-    def replace( self , key : str = None , args : list[ str ] | dict[ str , str ] = None , locale : str = None ) -> str :
-        from re import compile
+    def replace( self , key : str = None , args : list[ str ] | dict[ str , str ] = [] , locale : str = None ) -> str :
+        from re import findall
         text = self.get( key , locale )
-        rx = compile( "{[^{^}]*}" )
-        items = rx.findall( text )
         index = 0
-        ret = ""
-        p = 0
-        for texts in rx.split( text ) :
-            if not texts :
-                continue
-            item = items[ index ]
-            item = item[ 1 : -1 ].replace( " " , "" ) if len( item ) > 2 else ""
+        for texts in findall( "{[^{^}]*}" , text ) :
             if isinstance( args , ( list , tuple ) ) :
-                ret += str( args[ p ] )
-                p += 1 if p < len( args ) - 1 else 0
+                if len( args ) :
+                    s = args[ index ]
+                    index += 1 if index < len( args ) - 1 else 0
+                else :
+                    continue
             elif isinstance( args , dict ) :
+                item = texts[ 1 : -1 ].replace( " " , "" )
                 if item in args :
-                    ret += str( args[ item ] )
+                    s = args[ item ]
+                else :
+                    continue
             else :
-                raise TypeError( f"can't use type '{ type( args ) }'" )
-            index += 1
-            ret += texts
-        return ret
+                s = args
+            text = text.replace( texts , str( s ) , 1 )
+        return text
