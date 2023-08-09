@@ -65,19 +65,6 @@ class lang :
     def langs( self ) -> dict[ str , str ] :
         return self.languages
 
-    def __sizeof__( self ) -> int :
-        def get( obj ) -> int :
-            from sys import getsizeof
-            mem = 0
-            if isinstance( obj , ( list , tuple ) ) :
-                mem += sum( get( o ) for o in obj )
-            elif isinstance( obj , dict ) :
-                mem += sum( get( o ) for o in obj.values() )
-            else :
-                return getsizeof( obj )
-            return mem
-        return get( self.language )
-
     def __getitem__( self , key ) -> str :
         return self.get( key )
 
@@ -90,14 +77,14 @@ class lang :
     def __contains__( self , item ) -> bool :
         return item in self.languages
 
-    def __enter__( self ) -> dict[ str , str ] :
-        return self.languages
+    def __enter__( self ) :
+        return self
 
     def __iter__( self ) -> tuple[ dict[ str , str ] ] :
         return iter( self.keys() )
 
     def __exit__( self , *args ) -> None :
-        self.save() if all( item is None for item in args ) else ...
+        self.save()
 
     def __bool__( self ) -> bool :
         return self.locale_system in self.languages
@@ -128,7 +115,7 @@ class lang :
         self.types = {}
         self.init()
 
-    def init( self ) :
+    def init( self ) -> None :
         if isinstance( self.path , str ) :
             self.init_file( self.path )
         elif isinstance( self.path , dict ) :
@@ -168,11 +155,11 @@ class lang :
         self.languages = language
         self.path = language
 
-    def to_dict( self ) :
+    def to_dict( self ) -> None :
         self.types = { key : ".json" for key in self.languages.keys() }
         self.configs[ "file" ] = False
 
-    def to_file( self , path : str ) :
+    def to_file( self , path : str ) -> None :
         if not os.path.exists( path ) :
             os.makedirs( path )
         self.configs[ "file" ] = True

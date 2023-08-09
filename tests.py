@@ -55,7 +55,7 @@ def test() :
     lang.save()
 
     with lang as l :
-        assert l == lang.languages
+        assert l == lang
     del lang
 
     lang = langful.lang( "langs" , "test" )
