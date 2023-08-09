@@ -8,7 +8,7 @@ import json
 import os
 
 __all__ = [ "__version__" , "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
-__version__ = "0.43"
+__version__ = "0.44"
 
 def to_json( text : str ) -> dict[ str , str ] :
     from re import split
@@ -65,6 +65,19 @@ class lang :
     def langs( self ) -> dict[ str , str ] :
         return self.languages
 
+    def __sizeof__( self ) -> int :
+        def get( obj ) -> int :
+            from sys import getsizeof
+            mem = 0
+            if isinstance( obj , ( list , tuple ) ) :
+                mem += sum( get( o ) for o in obj )
+            elif isinstance( obj , dict ) :
+                mem += sum( get( o ) for o in obj.values() )
+            else :
+                return getsizeof( obj )
+            return mem
+        return get( self.language )
+
     def __getitem__( self , key ) -> str :
         return self.get( key )
 
@@ -90,7 +103,7 @@ class lang :
         return self.locale_system in self.languages
 
     def __repr__( self ) -> str :
-        return json.dumps( self.languages )
+        return json.dumps( self.languages , ensure_ascii = False )
 
     def __call__( self ) -> None :
         self.init()
@@ -115,19 +128,13 @@ class lang :
         self.types = {}
         self.init()
 
-    def config( self , key : str , value : str ) -> None :
-        if key in self.configs :
-            self.configs[ key ] = value
-        else :
-            raise errors.ConfigError( f"'{ key }' not in configs" )
-
     def init( self ) :
         if isinstance( self.path , str ) :
             self.init_file( self.path )
         elif isinstance( self.path , dict ) :
             self.init_dict( self.path )
 
-    def init_file( self , path ) -> None :
+    def init_file( self , path : str ) -> None :
         """
         init by a directory
         """
@@ -165,7 +172,7 @@ class lang :
         self.types = { key : ".json" for key in self.languages.keys() }
         self.configs[ "file" ] = False
 
-    def to_file( self , path ) :
+    def to_file( self , path : str ) :
         if not os.path.exists( path ) :
             os.makedirs( path )
         self.configs[ "file" ] = True
