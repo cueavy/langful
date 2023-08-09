@@ -2,8 +2,6 @@
 # lang
 """
 
-from . import errors
-
 import json
 import os
 
@@ -47,7 +45,7 @@ class lang :
         for locale in [ self.locale_use , self.locale_system , self.locale_default ] :
             if locale and locale in self.locales :
                 return locale
-        raise errors.LocaleError( f"no such locale '{ self.locale_system }' or '{ self.locale_default }'" )
+        raise KeyError( f"no such locale '{ self.locale_system }' or '{ self.locale_default }'" )
 
     @property
     def locales( self ) -> list[ str ] :
@@ -138,7 +136,7 @@ class lang :
                         try :
                             data = json.load( file )
                         except json.decoder.JSONDecodeError :
-                            raise errors.DecodeError( "can't to load .json file" )
+                            pass
                     elif suffix == ".lang" :
                         data = to_json( file.read() )
                     else :
@@ -179,7 +177,7 @@ class lang :
 
     def locale_set( self , locale : str = None  ) -> None :
         if locale and locale not in self.locales :
-            raise errors.LocaleError( f"no such locale '{ locale }'" )
+            raise KeyError( f"no such locale '{ locale }'" )
         self.locale_use = locale
 
     def lang_get( self , locale : str = None ) -> dict[ str , str ] :

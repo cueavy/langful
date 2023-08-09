@@ -106,7 +106,7 @@ lang = langful.lang( {
 ```python
 lang = langful.lang( {
     "en_us" : {
-        "test" : "%.%\%"
+        "test" : "{}.{}%"
     }
 } )
 print( lang.replace( "test" , [ 33 , 3 ] ) )
