@@ -3,12 +3,14 @@ import pip
 import sys
 import os
 
+pip.main( [ "install" , "--upgrade" , "setuptools" , "wheel" , "twine" , "pytest" ] )
+os.chdir( os.path.split( __file__ )[ 0 ] )
+import setuptools
+import pytest
+assert pytest.main( [ "./tests.py" , "-s" ] ) == 0 , "Test error"
+
 name = "langful"
 version = __import__( name ).__version__
-
-pip.main( [ "install" , "--upgrade" , "setuptools" , "wheel" , "twine" ] )
-
-import setuptools
 
 def remove( path : str ) -> None :
     shutil.rmtree( path ) if os.path.exists( path ) else ...
