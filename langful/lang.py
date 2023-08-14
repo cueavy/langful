@@ -7,13 +7,13 @@ import os
 import re
 
 __all__ = [ "__version__" , "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
-__version__ = "0.45"
+__version__ = "0.46"
 
 def to_json( text : str ) -> dict[ str , str ] :
     ret = {}
     for line in text.split( "\n" ) :
         try :
-            ret.update( dict( re.split( "\\s=\\s" , line.split( "#" )[ 0 ] , 1 ) ) )
+            ret.update( dict( [ re.split( "\\s=\\s" , line.split( "#" )[ 0 ] , 1 ) ] ) )
         except ValueError :
             continue
     return ret
