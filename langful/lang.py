@@ -4,22 +4,22 @@
 
 import json
 import os
+import re
 
 __all__ = [ "__version__" , "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
-__version__ = "0.44"
+__version__ = "0.45"
 
 def to_json( text : str ) -> dict[ str , str ] :
-    from re import split
     ret = {}
     for line in text.split( "\n" ) :
         try :
-            ret.update( dict( [ split( "\\s=\\s" , line.split( "#" )[ 0 ] , 1 ) ] ) )
+            ret.update( dict( re.split( "\\s=\\s" , line.split( "#" )[ 0 ] , 1 ) ) )
         except ValueError :
             continue
     return ret
 
 def to_lang( data : dict ) -> str :
-    return "\n".join( [ ' = '.join( item ) for item in list( data.items() ) ] )
+    return "\n".join( [ ' = '.join( item ) for item in data.items() ] )
 
 def getdefaultlocale() -> str :
     """
@@ -30,7 +30,7 @@ def getdefaultlocale() -> str :
     if platform == "win32" :
         code = __import__( "_locale" )._getdefaultlocale()[ 0 ]
         if code and code[ : 2 ] == "0x" :
-            code = __import__( "locale" ).windows_locale.get( int( code , 0 ) )
+            code = __import__( "locale" ).windows_locale[ int( code , 0 ) ]
     else :
         code = getlocale()[ 0 ]
     return code.replace( "-" , "_" ).lower()
@@ -42,7 +42,7 @@ class lang :
 
     @property
     def locale( self ) -> str :
-        for locale in [ self.locale_use , self.locale_system , self.locale_default ] :
+        for locale in self.locale_use , self.locale_system , self.locale_default :
             if locale and locale in self.locales :
                 return locale
         raise KeyError( f"no such locale '{ self.locale_system }' or '{ self.locale_default }'" )
@@ -100,11 +100,6 @@ class lang :
         return len( self.languages )
 
     def __init__( self , path : str | dict = "lang" , locale_default : str = "en_us" , json_first : bool = True ) -> None :
-        """
-        path: lang files dir, if use dict to set that to a dictionary or False
-        locale_default: default locale
-        load: is load json file first
-        """
         self.configs = { "separators" : [ " ," , ": " ] , "load" : json_first , "file" : False }
         self.locale_default = locale_default
         self.locale_use = None
@@ -136,7 +131,7 @@ class lang :
                         try :
                             data = json.load( file )
                         except json.decoder.JSONDecodeError :
-                            pass
+                            continue
                     elif suffix == ".lang" :
                         data = to_json( file.read() )
                     else :
@@ -222,10 +217,9 @@ class lang :
         return self.languages
 
     def replace( self , key : str = None , args : list[ str ] | dict[ str , str ] = [] , locale : str = None ) -> str :
-        from re import findall
         text = self.get( key , locale )
         index = 0
-        for texts in findall( "{[^{^}]*}" , text ) :
+        for texts in re.findall( "{[^{^}]*}" , text ) :
             if isinstance( args , ( list , tuple ) ) :
                 if len( args ) :
                     s = args[ index ]

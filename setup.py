@@ -11,13 +11,10 @@ pip.main( [ "install" , "--upgrade" , "setuptools" , "wheel" , "twine" ] )
 import setuptools
 
 def remove( path : str ) -> None :
-    if os.path.exists( path ) :
-        shutil.rmtree( path )
+    shutil.rmtree( path ) if os.path.exists( path ) else ...
 
 def clear() -> None :
-    remove( os.path.join( f"{ name }" , "__pycache__" ) )
-    remove( f"{ name }.egg-info" )
-    remove( "build" )
+    [ remove( path ) for path in [ os.path.join( f"{ name }" , "__pycache__" ) , f"{ name }.egg-info" , "build" ] ]
 
 remove( "dist" )
 clear()
@@ -45,5 +42,4 @@ setuptools.setup(
 
 clear()
 
-if upload and input( "pass enter to upload[Y/N]\n>" ) in [ "y" , "Y" , "yse" , "Yes" ] :
-    os.system( "twine upload dist/*" )
+os.system( "twine upload dist/*" ) if upload and input( "pass enter to upload[Y/N]\n>" ) in [ "y" , "Y" , "yse" , "Yes" ] else ...

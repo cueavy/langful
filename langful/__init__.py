@@ -1,13 +1,8 @@
 """
 # langful
 
-Help to localization
+provides internationalization for python
 
-# About
-
-github: https://github.com/cueavy/langful
-
-pypi: https://pypi.org/project/langful
 """
 
 from .lang import *
