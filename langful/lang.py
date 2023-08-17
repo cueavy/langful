@@ -7,7 +7,7 @@ import os
 import re
 
 __all__ = [ "__version__" , "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
-__version__ = "0.46"
+__version__ = "0.47"
 
 def to_json( text : str ) -> dict[ str , str ] :
     ret = {}
@@ -79,7 +79,7 @@ class lang :
         return self
 
     def __iter__( self ) -> tuple[ dict[ str , str ] ] :
-        return iter( self.keys() )
+        return iter( self.languages )
 
     def __exit__( self , *args ) -> None :
         self.save()
@@ -158,14 +158,14 @@ class lang :
         self.configs[ "file" ] = True
         self.path = path
 
-    def values( self ) -> tuple[ dict[ str , str ] ] :
-        return self.languages.values()
+    def values( self ) -> list[ dict[ str , str ] ] :
+        return list( self.languages.values() )
 
-    def items( self ) -> tuple[ str , dict[ str , str ] ] :
-        return self.languages.items()
+    def items( self ) -> list[ str , dict[ str , str ] ] :
+        return list( self.languages.items() )
 
-    def keys( self ) -> tuple[ str ] :
-        return self.languages.keys()
+    def keys( self ) -> list[ str ] :
+        return list( self.languages.keys() )
 
     def locale_get( self , locale : str = None ) -> str :
         return locale if locale else self.locale
@@ -188,6 +188,9 @@ class lang :
         del self.languages[ locale ]
         del self.types[ locale ]
 
+    def lang_pop( self , locale : str = None ) -> dict :
+        return self.languages.pop( self.locale_get( locale ) )
+
     def lang_merge( self , to : str , locale : str = None , args : str | list[ str ] = [] ) -> None :
         self.lang_set( to , self.merge( locale , args ) )
 
@@ -199,6 +202,9 @@ class lang :
 
     def remove( self , key : str , locale : str = None ) -> None :
         del self.languages[ self.locale_get( locale ) ][ key ]
+
+    def pop( self , key : str , locale : str = None ) -> str :
+        return self.languages[ self.locale_get( locale ) ].pop( key )
 
     def merge( self , locale : str = None , args : list[ str ] = [] ) -> dict[ str , str ] :
         ret = self.lang_get( locale )
