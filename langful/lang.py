@@ -7,7 +7,7 @@ import os
 import re
 
 __all__ = [ "__version__" , "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
-__version__ = "0.48"
+__version__ = "0.49"
 
 def to_json( text : str ) -> dict[ str , str ] :
     ret = {}
@@ -19,7 +19,7 @@ def to_json( text : str ) -> dict[ str , str ] :
     return ret
 
 def to_lang( data : dict ) -> str :
-    return "\n".join( [ ' = '.join( item ) for item in data.items() ] )
+    return "\n".join( [ " = ".join( item ) for item in data.items() ] )
 
 def getdefaultlocale() -> str :
     """
@@ -38,7 +38,23 @@ def getdefaultlocale() -> str :
 class lang :
 
     locale_system = getdefaultlocale()
-    __slots__ = [ "locale_default" , "locale_use" , "languages" , "configs" , "types" , "path" ]
+    __slots__ = [ "locale_default" , "locale_use" , "languages" , "configs" , "path" ]
+
+    @property
+    def types( self ) -> dict[ set , str ] :
+        types = { key : value for key , value in self.configs[ "type" ].items() if key in self.languages }
+        types.update( { key : ".json" for key in self.languages.keys() if key not in types } )
+        self.configs[ "type" ] = types
+        return types
+
+    @types.setter
+    def types( self , key : str , value : str ) -> None :
+        self.configs[ "type" ][ key ] = value
+        self.types
+
+    @types.deleter
+    def types( self ) -> None :
+        self.configs[ "type" ] = {}
 
     @property
     def locale( self ) -> str :
@@ -49,7 +65,7 @@ class lang :
 
     @property
     def locales( self ) -> list[ str ] :
-        return list( self.types.keys() )
+        return list( self.languages.keys() )
 
     @property
     def language( self ) -> dict[ str , str ] :
@@ -94,21 +110,22 @@ class lang :
         self.init()
 
     def __str__( self ) -> str :
-        return json.dumps( self.languages , indent = 4 , ensure_ascii = False , separators = self.configs[ "separators" ] )
+        return repr( self )
 
     def __len__( self ) -> int :
         return len( self.languages )
 
     def __init__( self , path : str | dict = "lang" , locale_default : str = "en_us" , json_first : bool = True ) -> None :
-        self.configs = { "separators" : [ " ," , ": " ] , "load" : json_first , "file" : False }
+        self.configs = { "separators" : [ " ," , ": " ] , "load" : json_first , "file" : False , "type" : {} }
         self.locale_default = locale_default
         self.locale_use = None
         self.languages = {}
         self.path = path
-        self.types = {}
         self.init()
 
     def init( self ) -> None :
+        del self.types
+        self.languages = {}
         if isinstance( self.path , str ) :
             self.init_file( self.path )
         elif isinstance( self.path , dict ) :
@@ -120,9 +137,7 @@ class lang :
         """
         loads = [ [ ".lang" , ".lang" ] , [ ".json" , ".lang" ] ][ self.configs[ "load" ] ]
         self.configs[ "file" ] = True
-        self.languages = {}
         self.path = path
-        self.types = {}
         for lang_file in os.listdir( path ) :
             name , suffix = os.path.splitext( lang_file )
             if ( suffix in loads ) and ( ( suffix == loads[ 0 ] ) or ( name not in self.locales ) ) :
@@ -136,25 +151,20 @@ class lang :
                         data = to_json( file.read() )
                     else :
                         continue
-                self.languages[ name ] = data
-                self.types[ name ] = suffix
+                self.lang_set( name , data , suffix )
 
-    def init_dict( self , language : dict = None ) -> None :
+    def init_dict( self , languages : dict = None ) -> None :
         """
         init by a dictionary, so cant't to save it to the file
         """
-        self.types = { key : ".json" for key in language.keys() }
         self.configs[ "file" ] = False
-        self.languages = language
-        self.path = language
+        self.languages = languages
 
     def to_dict( self ) -> None :
-        self.types = { key : ".json" for key in self.languages.keys() }
-        self.configs[ "file" ] = False
+        self.init_dict( self.languages )
 
     def to_file( self , path : str ) -> None :
-        if not os.path.exists( path ) :
-            os.makedirs( path )
+        os.makedirs( path ) if not os.path.exists( path ) else ...
         self.configs[ "file" ] = True
         self.path = path
 
@@ -186,7 +196,6 @@ class lang :
     def lang_remove( self , locale : str = None ) -> None :
         locale = self.locale_get( locale )
         del self.languages[ locale ]
-        del self.types[ locale ]
 
     def lang_pop( self , locale : str = None ) -> dict :
         return self.languages.pop( self.locale_get( locale ) )
