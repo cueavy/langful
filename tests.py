@@ -60,7 +60,9 @@ def test() :
 
     lang = langful.lang( "langs" , "test" )
     lang.to_dict()
-    print(lang.locale_use)
+    print(lang.locale_default)
+    print(lang.locales)
+    print(lang.locale)
     print(lang)
     lang.pop( "k" )
     lang.lang_pop( "test" )
