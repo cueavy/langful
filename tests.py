@@ -60,6 +60,7 @@ def test() :
 
     lang = langful.lang( "langs" , "test" )
     lang.to_dict()
-    assert not lang.configs[ "file" ]
+    print(lang)
     lang.pop( "k" )
     lang.lang_pop( "test" )
+    assert not lang.configs[ "file" ]
