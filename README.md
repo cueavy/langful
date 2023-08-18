@@ -52,7 +52,7 @@ en_us
 .lang
 
 > if you need highlight, you can install `vscode-langful` :
-[GitHub](https://github.com/cueavy/vscode-langful)
+[GitHub](https://github.com/cueavy/vscode-langful/releases/latest)
 [VSCode](https://marketplace.visualstudio.com/items?itemName=cueavyqwp.langful)
 
 ```

@@ -52,7 +52,7 @@ zh_cn
 .lang
 
 > 若需要高亮 请安装 `vscode-langful` :
-[GitHub](https://github.com/cueavy/vscode-langful)
+[GitHub](https://github.com/cueavy/vscode-langful/releases/latest)
 [VSCode](https://marketplace.visualstudio.com/items?itemName=cueavyqwp.langful)
 
 ```

@@ -1,5 +1,5 @@
 """
-# lang
+lang
 """
 
 import json
@@ -7,7 +7,7 @@ import os
 import re
 
 __all__ = [ "__version__" , "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
-__version__ = "0.47"
+__version__ = "0.48"
 
 def to_json( text : str ) -> dict[ str , str ] :
     ret = {}
