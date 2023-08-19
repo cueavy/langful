@@ -52,14 +52,18 @@ def test() :
     assert json.loads( repr( lang ) ) == json.loads( str( lang ) )
 
     lang.to_file( "langs" )
+    lang.types[ "test" ] = ".lang"
     lang.save()
 
     with lang as l :
         assert l == lang
     del lang
 
-    lang = langful.lang( "langs" , "test" )
+    lang = langful.lang( "langs" )
     lang.to_dict()
     lang.lang_pop( "en_us" )
+    lang.locale_use = "test"
     lang.pop( "k" )
+    assert "k" not in lang.lang
     assert not lang.configs[ "file" ]
+    assert lang.types[ "test" ] == ".lang"

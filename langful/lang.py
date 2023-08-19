@@ -7,7 +7,7 @@ import os
 import re
 
 __all__ = [ "__version__" , "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
-__version__ = "0.49"
+__version__ = "0.50"
 
 def to_json( text : str ) -> dict[ str , str ] :
     ret = {}
@@ -25,14 +25,14 @@ def getdefaultlocale() -> str :
     """
     getdefaultlocale will deprecated so use this
     """
-    from locale import getlocale
-    from sys import platform
-    if platform == "win32" :
+    import locale
+    import sys
+    try :
         code = __import__( "_locale" )._getdefaultlocale()[ 0 ]
-        if code and code[ : 2 ] == "0x" :
-            code = __import__( "locale" ).windows_locale[ int( code , 0 ) ]
-    else :
-        code = getlocale()[ 0 ]
+    except ( ModuleNotFoundError , AttributeError ) :
+        code = locale.getlocale()[ 0 ]
+    if sys.platform == "win32" and code and code[ : 2 ] == "0x" :
+        code = locale.windows_locale[ int( code , 0 ) ]
     return code.replace( "-" , "_" ).lower()
 
 class lang :
@@ -50,11 +50,6 @@ class lang :
     @types.setter
     def types( self , key : str , value : str ) -> None :
         self.configs[ "type" ][ key ] = value
-        self.types
-
-    @types.deleter
-    def types( self ) -> None :
-        self.configs[ "type" ] = {}
 
     @property
     def locale( self ) -> str :
@@ -106,9 +101,6 @@ class lang :
     def __repr__( self ) -> str :
         return json.dumps( self.languages , ensure_ascii = False )
 
-    def __call__( self ) -> None :
-        self.init()
-
     def __str__( self ) -> str :
         return repr( self )
 
@@ -124,7 +116,7 @@ class lang :
         self.init()
 
     def init( self ) -> None :
-        del self.types
+        self.configs[ "type" ] = {}
         self.languages = {}
         if isinstance( self.path , str ) :
             self.init_file( self.path )
@@ -180,9 +172,7 @@ class lang :
     def locale_get( self , locale : str = None ) -> str :
         return locale if locale else self.locale
 
-    def locale_set( self , locale : str = None  ) -> None :
-        if locale and locale not in self.locales :
-            raise KeyError( f"no such locale '{ locale }'" )
+    def locale_set( self , locale : str = None ) -> None :
         self.locale_use = locale
 
     def lang_get( self , locale : str = None ) -> dict[ str , str ] :
@@ -194,8 +184,7 @@ class lang :
         self.types[ locale ] = suffix
 
     def lang_remove( self , locale : str = None ) -> None :
-        locale = self.locale_get( locale )
-        del self.languages[ locale ]
+        del self.languages[ self.locale_get( locale ) ]
 
     def lang_pop( self , locale : str = None ) -> dict :
         return self.languages.pop( self.locale_get( locale ) )
