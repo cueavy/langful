@@ -4,7 +4,7 @@ import json
 def test() :
 
     assert langful.to_lang( { "k" : "v" , "=" : "= 1 + 2" } ) == "k = v\n= = = 1 + 2"
-    assert langful.to_json( """k = v\n= = = 1 + 2""" ) == { "k" : "v" , "=" : "= 1 + 2" }
+    assert langful.to_json( """k = v\n= = = 1 + 2""" ) == { "k" : "v" , "" : "= = 1 + 2" }
     assert "_" in langful.getdefaultlocale()
 
     lang = langful.lang( { "test" : { "k" : "v" } , "en_us" : { "hi" : "Hi" , "..." : "..." } } , "test" )
