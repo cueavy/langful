@@ -4,20 +4,22 @@ import sys
 import os
 
 pip.main( [ "install" , "--upgrade" , "setuptools" , "wheel" , "twine" , "pytest" ] )
-os.chdir( os.path.split( __file__ )[ 0 ] )
+
 import setuptools
 import pytest
+
 assert pytest.main( [ "./tests.py" , "-s" ] ) == 0 , "Test error"
 
 name = "langful"
 version = __import__( name ).__version__
 
 def remove( path : str ) -> None :
-    shutil.rmtree( path ) if os.path.exists( path ) else ...
+    shutil.rmtree( path ) if os.path.exists( path ) else None
 
 def clear() -> None :
     [ remove( path ) for path in [ os.path.join( f"{ name }" , "__pycache__" ) , f"{ name }.egg-info" , "build" ] ]
 
+os.chdir( os.path.dirname( __file__ ) )
 remove( "dist" )
 clear()
 

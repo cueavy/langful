@@ -7,31 +7,30 @@ import os
 import re
 
 __all__ = [ "__version__" , "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
-__version__ = "0.51"
+__version__ = "0.52"
 
 def to_json( text : str ) -> dict[ str , str ] :
     ret = {}
     for line in text.split( "\n" ) :
         try :
-            ret.update( dict( [ re.split( "\s+=\s+|\s+=|=\s+|=" , line.split( "#" )[ 0 ] , 1 ) ] ) )
+            ret.update( dict( [ re.split( "\\s+=\\s+|\\s+=|=\\s+|=" , line.split( "#" )[ 0 ] , 1 ) ] ) )
         except ValueError :
             continue
     return ret
 
 def to_lang( data : dict ) -> str :
-    return "\n".join( [ " = ".join( item ) for item in data.items() ] )
+    return "\n".join( " = ".join( item ) for item in data.items() )
 
 def getdefaultlocale() -> str :
     """
     getdefaultlocale will deprecated so use this
     """
     import locale
-    import sys
     try :
         code = __import__( "_locale" )._getdefaultlocale()[ 0 ]
     except ( ModuleNotFoundError , AttributeError ) :
         code = locale.getlocale()[ 0 ]
-    if sys.platform == "win32" and code and code[ : 2 ] == "0x" :
+    if os.name == "nt" and code and code[ : 2 ] == "0x" :
         code = locale.windows_locale[ int( code , 0 ) ]
     return code.replace( "-" , "_" ).lower()
 
@@ -86,10 +85,10 @@ class lang :
     def __contains__( self , item ) -> bool :
         return item in self.languages
 
-    def __enter__( self ) :
+    def __enter__( self ) -> "lang" :
         return self
 
-    def __iter__( self ) -> tuple[ dict[ str , str ] ] :
+    def __iter__( self ) -> ... :
         return iter( self.languages )
 
     def __exit__( self , *args ) -> None :
