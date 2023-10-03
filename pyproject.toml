@@ -3,7 +3,7 @@ name = "langful"
 version = "0.52"
 description = "provides internationalization for python"
 readme = "docs/README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 keywords = [ "i18n", "json", "internationalization",]
 classifiers = [ "Programming Language :: Python :: 3", "License :: OSI Approved :: MIT License", "Operating System :: OS Independent",]
 [[project.authors]]
