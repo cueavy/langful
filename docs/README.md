@@ -15,64 +15,56 @@
     <a href = "https://github.com/cueavy/langful" >
         <img alt = "Github issues" src = "https://img.shields.io/github/issues/cueavy/langful?color=blue" >
     </a>
-
----
-
-[
-[en_us](./README.md)
-|
-zh_cn
-]
-
----
-
+    <hr>
+        <p>[ en_us | <a href = "./README_zh_cn.md" >zh_cn</a> ]</p>
+    <hr>
 </div>
 
-# 安装
+# install
 
-`pip3 install langful` 或 `pip install langful`
+`pip3 install langful` or `pip install langful`
 
-# 开始
+# get start
 
-## 翻译文件
+## lang file
 
-> 注: `langful` 默认先加载 `.json` 文件
+> ps: `langful` load json file first
 >
-> 或者设置为 `langful.lang( json_first = False )`
+> or you can set to `langful.lang( json_first = False )`
 
 .json
 
 ```json
 {
-    "键": "值" ,
+    "key": "value" ,
     "..." : "..."
 }
 ```
 
 .lang
 
-> 若需要高亮 请安装 `vscode-langful` :
+> if you need highlight, you can install `vscode-langful` :
 [GitHub](https://github.com/cueavy/vscode-langful/releases/latest)
 [VSCode](https://marketplace.visualstudio.com/items?itemName=cueavyqwp.langful)
 
 ```
-键 = 值 # 嗨, 这是个示例
-# 嗨, 这也是个示例
+key = value # hi, this is a example
+# hi, I am a example, too
 ... = ...
 ```
 
-## 初始化
+## init
 
-共有 `两种` 方式进行初始化
+there have `two` ways to init
 
-### 通过文件
+### by files
 
 ```python
 import langful
 lang = langful.lang()
 ```
 
-然后可以将文件放在 :
+then you can put file at there :
 
 * lang
 * * en_us.lang
@@ -81,9 +73,9 @@ lang = langful.lang()
 * * zh_cn.json
 * * ...
 
-或者设置为别的目录 并设置 `langful.lang( "目录名称" )`
+or use other directory name and set `langful.lang( "directory name" )`
 
-### 通过字典
+### by dictionary
 
 ```python
 import langful
@@ -99,9 +91,9 @@ lang = langful.lang( {
 } )
 ```
 
-## 函数
+## function
 
-### 替换
+### replace
 
 ```python
 lang = langful.lang( {
@@ -112,7 +104,7 @@ lang = langful.lang( {
 print( lang.replace( "test" , [ 33 , 3 ] ) )
 ```
 
-### 合并
+### merge
 
 ```python
 import langful
@@ -128,7 +120,7 @@ lang = langful.lang( {
 print( lang.merge( "en_us" , [ "zh_cn" ] ) )
 ```
 
-# 关于
+# about
 
 [
 [github](https://github.com/cueavy/langful)

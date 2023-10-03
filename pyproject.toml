@@ -1,0 +1,18 @@
+[project]
+name = "langful"
+version = "0.52"
+description = "provides internationalization for python"
+readme = "docs/README.md"
+requires-python = ">=3.7"
+keywords = [ "i18n", "json", "internationalization",]
+classifiers = [ "Programming Language :: Python :: 3", "License :: OSI Approved :: MIT License", "Operating System :: OS Independent",]
+[[project.authors]]
+name = "cueavyqwp"
+email = "cueavy@outlook.com"
+
+[project.license]
+file = "LICENSE"
+
+[project.urls]
+Homepage = "https://github.com/cueavy/langful"
+Source = "https://github.com/cueavy/langful.git"

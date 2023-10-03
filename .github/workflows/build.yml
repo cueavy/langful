@@ -17,16 +17,13 @@ jobs :
       - name : Setup
         uses : actions/setup-python@v4
         with :
-          python-version : "3.x"
+          python-version : "3.7"
       - name : Install
         run : |
-          python -m pip install --upgrade pip pytest
-      - name : Test
+          python -m pip install --upgrade pip
+      - name : Test & Build
         run : |
-          pytest tests.py -s
-      - name : Build
-        run : |
-          python setup.py -noask
+          python pack.py -noask
       - name : Upload
         uses : actions/upload-artifact@v3
         with :

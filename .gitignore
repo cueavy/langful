@@ -1,16 +1,17 @@
 /*
 
+!src
+!docs
 !dist
+!tests
+!pack.py
 !LICENSE
-!langful
 !.github
-!setup.py
-!tests.py
-!README.md
 !.gitignore
-!README-zh_cn.md
+!pyproject.toml
 
 *__pycache__
+*.egg-info
 *.json
 *lang
 *.pyc

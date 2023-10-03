@@ -15,64 +15,56 @@
     <a href = "https://github.com/cueavy/langful" >
         <img alt = "Github issues" src = "https://img.shields.io/github/issues/cueavy/langful?color=blue" >
     </a>
-
----
-
-[
-en_us
-|
-[zh_cn](./README-zh_cn.md)
-]
-
----
-
+    <hr>
+        <p>[ <a href = "./README.md" >en_us</a> | zh_cn ]</p>
+    <hr>
 </div>
 
-# install
+# 安装
 
-`pip3 install langful` or `pip install langful`
+`pip3 install langful` 或 `pip install langful`
 
-# get start
+# 开始
 
-## lang file
+## 翻译文件
 
-> ps: `langful` load json file first
+> 注: `langful` 默认先加载 `.json` 文件
 >
-> or you can set to `langful.lang( json_first = False )`
+> 或者设置为 `langful.lang( json_first = False )`
 
 .json
 
 ```json
 {
-    "key": "value" ,
+    "键": "值" ,
     "..." : "..."
 }
 ```
 
 .lang
 
-> if you need highlight, you can install `vscode-langful` :
+> 若需要高亮 请安装 `vscode-langful` :
 [GitHub](https://github.com/cueavy/vscode-langful/releases/latest)
 [VSCode](https://marketplace.visualstudio.com/items?itemName=cueavyqwp.langful)
 
 ```
-key = value # hi, this is a example
-# hi, I am a example, too
+键 = 值 # 嗨, 这是个示例
+# 嗨, 这也是个示例
 ... = ...
 ```
 
-## init
+## 初始化
 
-there have `two` ways to init
+共有 `两种` 方式进行初始化
 
-### by files
+### 通过文件
 
 ```python
 import langful
 lang = langful.lang()
 ```
 
-then you can put file at there :
+然后可以将文件放在 :
 
 * lang
 * * en_us.lang
@@ -81,9 +73,9 @@ then you can put file at there :
 * * zh_cn.json
 * * ...
 
-or use other directory name and set `langful.lang( "directory name" )`
+或者设置为别的目录 并设置 `langful.lang( "目录名称" )`
 
-### by dictionary
+### 通过字典
 
 ```python
 import langful
@@ -99,9 +91,9 @@ lang = langful.lang( {
 } )
 ```
 
-## function
+## 函数
 
-### replace
+### 替换
 
 ```python
 lang = langful.lang( {
@@ -112,7 +104,7 @@ lang = langful.lang( {
 print( lang.replace( "test" , [ 33 , 3 ] ) )
 ```
 
-### merge
+### 合并
 
 ```python
 import langful
@@ -128,7 +120,7 @@ lang = langful.lang( {
 print( lang.merge( "en_us" , [ "zh_cn" ] ) )
 ```
 
-# about
+# 关于
 
 [
 [github](https://github.com/cueavy/langful)
