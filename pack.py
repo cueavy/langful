@@ -8,7 +8,7 @@ subprocess.check_call( [ sys.executable , "-m" , "pip" , "install" , "--upgrade"
 import toml
 import pytest
 
-os.chdir( os.path.dirname( __file__ ) )
+os.chdir( os.path.abspath( os.path.dirname( __file__ ) ) )
 upload = "-noask" not in sys.argv
 sys.path.append( "src" )
 

@@ -16,7 +16,7 @@
         <img alt = "Github issues" src = "https://img.shields.io/github/issues/cueavy/langful?color=blue" >
     </a>
     <hr>
-        <p>[ en_us | <a href = "./README_zh_cn.md" >zh_cn</a> ]</p>
+        <p>[ en_us | <a href = "./README-zh_cn.md" >zh_cn</a> ]</p>
     <hr>
 </div>
 
