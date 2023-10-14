@@ -23,9 +23,9 @@ jobs :
           python -m pip install --upgrade pip
       - name : Test & Build
         run : |
-          python pack.py -noask
+          python pack.py
       - name : Upload
         uses : actions/upload-artifact@v3
         with :
           name : langful
-          path : dist/*.whl
+          path : dist

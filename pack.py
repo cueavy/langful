@@ -9,7 +9,6 @@ import toml
 import pytest
 
 os.chdir( os.path.abspath( os.path.dirname( __file__ ) ) )
-upload = not any( key in [ "-pack" , "-noask" ] for key in sys.argv )
 sys.path.insert( 0 , "src" )
 
 assert pytest.main( [ "-s" ] ) == 0
@@ -20,10 +19,3 @@ with open( "pyproject.toml" , "w" , encoding = "utf-8" ) as file : toml.dump( da
 
 shutil.rmtree( "dist" ) if os.path.exists( "dist" ) else None
 subprocess.check_call( [ sys.executable , "-m" , "build" ] )
-
-if upload :
-    for _ in range( 3 ) :
-        if input( "upload [Y/N]\n>" ) in [ "y" , "yes" ] : break
-    else :
-        quit()
-    subprocess.check_call( [ sys.executable , "-m" , "twine" , "upload" , "dist/*" ] )

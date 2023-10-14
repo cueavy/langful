@@ -6,6 +6,7 @@
 !pack.py
 !LICENSE
 !.github
+!update.py
 !.gitignore
 !pyproject.toml
 
