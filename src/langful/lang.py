@@ -6,8 +6,7 @@ import json
 import os
 import re
 
-__all__ = [ "__version__" , "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
-__version__ = "0.52"
+__all__ = [ "to_json" , "to_lang" , "getdefaultlocale" , "lang" ]
 
 def to_json( text : str ) -> dict[ str , str ] :
     ret = {}

@@ -9,16 +9,16 @@ import toml
 import pytest
 
 os.chdir( os.path.abspath( os.path.dirname( __file__ ) ) )
-upload = "-noask" not in sys.argv
-sys.path.append( "src" )
+upload = not any( key in [ "-pack" , "-noask" ] for key in sys.argv )
+sys.path.insert( 0 , "src" )
 
 assert pytest.main( [ "-s" ] ) == 0
 
 with open( "pyproject.toml" , "r" , encoding = "utf-8" ) as file : data = toml.load( file )
 data[ "project" ][ "version" ] = __import__( data[ "project" ][ "name" ] ).__version__
-with open( "pyproject.toml" , "w" , encoding = "utf-8" ) as file : data = toml.dump( data , file )
-shutil.rmtree( "dist" ) if os.path.exists( "dist" ) else None
+with open( "pyproject.toml" , "w" , encoding = "utf-8" ) as file : toml.dump( data , file )
 
+shutil.rmtree( "dist" ) if os.path.exists( "dist" ) else None
 subprocess.check_call( [ sys.executable , "-m" , "build" ] )
 
 if upload :

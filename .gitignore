@@ -2,7 +2,6 @@
 
 !src
 !docs
-!dist
 !tests
 !pack.py
 !LICENSE
@@ -12,6 +11,3 @@
 
 *__pycache__
 *.egg-info
-*.json
-*lang
-*.pyc
