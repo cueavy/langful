@@ -19,18 +19,17 @@ class window :
         self.root = tkinter.Tk()
         self.root.title( "update" )
         self.root.geometry( "240x100" )
+        self.root.resizable( 0 , 0 )
 
     def init( self ) -> None :
         ( frame := tkinter.Frame( self.root ) ).pack( fill = "both" , expand = True )
         self.entry = tkinter.ttk.Entry( frame )
         self.entry.pack( fill = "x" )
-        self.checkbuttons = []
-        for value in [ "build" , "release" ] :
-            tkinter.Label( f := tkinter.Frame( frame ) , text = value ).pack( side = "left" , fill = "x" )
-            checkbutton = tkinter.ttk.Checkbutton( f , variable = ( i := tkinter.BooleanVar() ) )
-            checkbutton.pack( side = "right" , fill = "x" )
-            self.checkbuttons.append( i )
-            f.pack( expand = True )
+        tkinter.Label( f := tkinter.Frame( frame ) , text = "release" ).pack( side = "left" , fill = "x" )
+        checkbutton = tkinter.ttk.Checkbutton( f , variable = ( i := tkinter.BooleanVar() ) )
+        checkbutton.pack( side = "right" , fill = "x" )
+        self.checkbutton = i
+        f.pack( expand = True )
         tkinter.ttk.Separator( self.root ).pack( fill = "x" )
         tkinter.ttk.Button( self.root , text = "update" , command = self.update ).pack()
 
@@ -39,22 +38,21 @@ class window :
         self.root.mainloop()
 
     def update( self ) -> None :
-        commit = self.entry.get()
-        build , release = [ i.get() for i in self.checkbuttons ]
         try :
-            assert commit , "no commint"
-            assert all( tkinter.messagebox.askokcancel( "update" , f"are you sure to update ( update after { _ } times )" ) for _ in range( 5 , 0 , -1 ) ) , "user cancel"
+            assert ( commit := self.entry.get() ) , "no commint"
+            assert all( tkinter.messagebox.askokcancel( "update" , f"are you sure to update ( update after { _ } times )" ) for _ in range( 10 , 0 , -1 ) ) , "user cancel"
         except AssertionError as e :
             tkinter.messagebox.showwarning( "cancel" , e )
             return
         subprocess.check_call( [ "git" , "add" , "." ] )
         subprocess.check_call( [ "git" , "commit" , "-m" , commit ] )
         subprocess.check_call( [ "git" , "push" , "origin" ] )
-        subprocess.check_call( [ sys.executable , "pack.py" ] ) if build or release else None
-        if release :
+        if self.checkbutton.get() :
+            subprocess.check_call( [ sys.executable , "pack.py" ] )
             subprocess.check_call( [ "git" , "tag" , version ] )
             subprocess.check_call( [ "git" , "push" , "origin" , "--tags" ] )
             subprocess.check_call( [ sys.executable , "-m" , "twine" , "upload" , "dist/*" ] )
+        self.root.destroy()
 
 if __name__ == "__main__" :
     root = window()
