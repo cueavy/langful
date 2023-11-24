@@ -19,7 +19,7 @@ class window :
         self.root = tkinter.Tk()
         self.root.title( "update" )
         self.root.geometry( "240x100" )
-        self.root.resizable( 0 , 0 )
+        self.root.resizable( False , False )
 
     def init( self ) -> None :
         ( frame := tkinter.Frame( self.root ) ).pack( fill = "both" , expand = True )
@@ -42,7 +42,7 @@ class window :
             assert ( commit := self.entry.get() ) , "no commint"
             assert all( tkinter.messagebox.askokcancel( "update" , f"are you sure to update ( update after { _ } times )" ) for _ in range( 10 , 0 , -1 ) ) , "user cancel"
         except AssertionError as e :
-            tkinter.messagebox.showwarning( "cancel" , e )
+            tkinter.messagebox.showwarning( "cancel" , str( e ) )
             return
         subprocess.check_call( [ "git" , "add" , "." ] )
         subprocess.check_call( [ "git" , "commit" , "-m" , commit ] )
