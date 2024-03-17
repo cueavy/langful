@@ -7,7 +7,7 @@ import json
 import sys
 import os
 # install & update modules
-subprocess.check_call( [ sys.executable , "-m" , "pip" , "install" , "--upgrade" , "toml" , "twine" , "build" , "pytest" ] )
+subprocess.check_call( [ sys.executable , "-m" , "pip" , "install" , "--upgrade" , "build" , "pytest" , "toml" ] )
 import pytest
 import toml
 # test
