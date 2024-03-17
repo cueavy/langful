@@ -1,32 +1,32 @@
 {
-    "project" : {
-        "name" : "langful" ,
-        "version" : null,
-        "description" : "provides internationalization for python" ,
-        "readme" : "docs/README.md" ,
-        "requires-python" : ">=3.10" ,
-        "keywords" : [
-            "i18n" ,
-            "json" ,
+    "project": {
+        "name": "langful",
+        "version": null,
+        "description": "provides internationalization for python",
+        "readme": "docs/README.md",
+        "requires-python": ">=3.10",
+        "keywords": [
+            "i18n",
+            "json",
             "internationalization"
-        ] ,
-        "classifiers" : [
-            "Programming Language :: Python :: 3" ,
-            "License :: OSI Approved :: MIT License" ,
-            "Operating System :: OS Independent"
-        ] ,
-        "authors" : [
+        ],
+        "classifiers": [
+            "Programming Language:: Python:: 3",
+            "License:: OSI Approved:: MIT License",
+            "Operating System:: OS Independent"
+        ],
+        "authors": [
             {
-                "name" : "cueavyqwp" ,
-                "email" : "cueavy@outlook.com"
+                "name": "cueavyqwp",
+                "email": "cueavy@outlook.com"
             }
-        ] ,
-        "license" : {
-            "file" : "LICENSE"
-        } ,
-        "urls" : {
-            "Homepage" : "https://github.com/cueavy/langful" ,
-            "Source" : "https://github.com/cueavy/langful.git"
+        ],
+        "license": {
+            "file": "LICENSE"
+        },
+        "urls": {
+            "Homepage": "https://github.com/cueavy/langful",
+            "Source": "https://github.com/cueavy/langful.git"
         }
     }
 }

@@ -3,7 +3,7 @@
 !src
 !docs
 !tests
-!setup.py
+!pack.py
 !pyproject.toml
 !pyproject.json
 
