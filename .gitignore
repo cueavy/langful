@@ -3,12 +3,14 @@
 !src
 !docs
 !tests
-!pack.py
+!build.py
+!pyproject.toml
+!pyproject.json
+
 !LICENSE
 !.github
-!update.py
 !.gitignore
-!pyproject.toml
 
 *__pycache__
 *.egg-info
+*.py[cod]

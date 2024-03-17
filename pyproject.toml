@@ -1,6 +1,6 @@
 [project]
 name = "langful"
-version = "0.52"
+version = "0.53"
 description = "provides internationalization for python"
 readme = "docs/README.md"
 requires-python = ">=3.10"
