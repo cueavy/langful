@@ -5,7 +5,7 @@ provides internationalization for python
 
 """
 
-from .func import *
-from .lang import *
+from .locale import *
+from .langful import *
 
 __version__ = "0.53"
