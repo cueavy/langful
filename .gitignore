@@ -4,7 +4,6 @@
 !docs
 !tests
 !pack.py
-!pyproject.toml
 !pyproject.json
 
 !LICENSE
