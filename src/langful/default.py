@@ -1,5 +1,5 @@
 """
-default loaders
+default loader
 """
 
 import typing

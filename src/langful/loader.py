@@ -39,7 +39,8 @@ class loader :
     def load( self , file : str , suffix : str | None = None ) -> dict[ str , typing.Any ] :
         if suffix is None : suffix = os.path.splitext( file )[ -1 ]
         if suffix not in self : raise KeyError( f"no parser can load file with '{ suffix }' suffix" )
-        if not ( os.path.exists( file ) or os.path.isfile( file ) ) : raise FileNotFoundError( "the file is not exist or it's not a file" )
+        if not os.path.exists( file ) : raise FileNotFoundError( "the file is not exist" )
+        elif not os.path.isfile( file ) : raise IsADirectoryError( "the path is exist but not a file" )
         with open( file , "rb" ) as fp : return self.suffixes[ suffix ].load( fp.read() )
 
     def save( self , file : str , data : dict[ str , typing.Any ] , suffix : str | None = None ) -> None :

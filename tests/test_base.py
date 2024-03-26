@@ -1,3 +1,0 @@
-
-def test() -> None :
-    pass
