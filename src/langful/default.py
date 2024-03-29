@@ -4,7 +4,6 @@ default loader
 
 import typing
 import json
-import re
 
 from . import loader as _loader
 
@@ -32,8 +31,9 @@ class LANG( _loader.parser ) :
     def load( self , data : bytes ) -> dict[ str , typing.Any ] :
         ret : dict[ str , typing.Any ] = {}
         for line in data.decode().splitlines() :
-            splits : list[str] = re.split( "\\s*=\\s*" , line.split( "#" )[ 0 ] , 1 )
-            if len( splits ) == 2 : ret[ splits[ 0 ] ] = splits[ -1 ]
+            line = line.partition( "#" )[ 0 ]
+            key , sep , value = line.partition( "=" )
+            if sep : ret[ key.strip() ] = value.strip()
         return ret
 
     def save( self , data : dict[ str , typing.Any ] ) -> bytes :

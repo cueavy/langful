@@ -3,6 +3,7 @@ langful class
 """
 
 import typing
+import re
 import os
 
 from .locale import getlocale
@@ -107,9 +108,12 @@ class langful :
     def keys( self ) -> tuple[ str , ... ] :
         return tuple( self.languages.keys() )
 
-    def merge( self , locale : str | None = None , *locales : str ) -> dict[ str , typing.Any ] :
-        language = self.get_language( locale ).copy()
-        for l in locales : language.update( { key : value for key , value in self.get_language( l ).items() } )
+    def merge( self , *locales : str ) -> dict[ str , typing.Any ] :
+        if len( locales ) < 1 : raise IndexError( "the locales too little" )
+        language = self.get_language( locales[ -1 ] ).copy()
+        for locale in locales[ : -1 ][ : : -1 ] :
+            for key , value in self.get_language( locale ).items() :
+                if key not in language : language[ key ] = value
         return language
 
     def merge_all( self , default_locale : str | None = None ) -> None :
@@ -118,6 +122,11 @@ class langful :
         locales = self.locales.copy()
         locales.remove( default_locale )
         for locale in locales : self.set_language( self.merge( default_locale , locale ) , locale )
+
+    def replace( self , key : str , data : dict[ str , typing.Any ] , locale : str | None = None ) -> str :
+        def func( match : re.Match ) -> str :
+            return str( data.get( match.group( 1 ) , match.group( 0 ) ) )
+        return re.sub( "\\{(\\w+)\\}" , func , self.get( key , locale ) )
 
     def get( self , key : str , locale : str | None = None ) -> typing.Any :
         return self.get_language( locale )[ key ]
