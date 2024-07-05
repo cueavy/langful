@@ -60,11 +60,12 @@ class langful :
     def __len__( self ) -> int :
         return len( self.languages )
 
-    def __init__( self , path : str | None = "lang" , locale_default : str = "en_us" , loader : default._loader.loader = default.loader() ) -> None :
+    def __init__( self , path : str | None = "lang" , locale_default : str = "en_us" , loader : default._loader.loader = default.loader() , getlocale : typing.Callable[ ... , str ] = getlocale ) -> None :
         self.default_locales : list[ str ] = [ "" , getlocale() , locale_default ]
         self.languages : dict[ str , dict[ str , typing.Any ] ] = {}
         self.loader : default._loader.loader = loader
         self.types : dict[ str , str ] = {}
+        self._getlocale = getlocale
         self.path : str = "" if path is None else path
         if path : self.load_all( path )
 
@@ -99,6 +100,17 @@ class langful :
             if path is not None : file = os.path.join( path , os.path.split( file )[ -1 ] )
             self.save( locale , file )
 
+    def reset_default_locales( self , locale_default : str | None = None ) -> None :
+        self.default_locales = [ "" , self._getlocale() , self.default_locales[ -1 ] if locale_default is None else locale_default ]
+
+    def reset_languages( self ) -> None :
+        self.languages.clear()
+        self.types.clear()
+
+    def reset( self ) -> None :
+        self.reset_default_locales()
+        self.reset_languages()
+
     def values( self ) -> tuple[ dict[ str , typing.Any ] , ... ] :
         return tuple( self.languages.values() )
 
@@ -109,7 +121,7 @@ class langful :
         return tuple( self.languages.keys() )
 
     def merge( self , *locales : str ) -> dict[ str , typing.Any ] :
-        if len( locales ) < 1 : raise IndexError( "the locales too little" )
+        if len( locales ) < 1 : raise IndexError( "out of the locales range" )
         language = self.get_language( locales[ -1 ] ).copy()
         for locale in locales[ : -1 ][ : : -1 ] :
             for key , value in self.get_language( locale ).items() :
