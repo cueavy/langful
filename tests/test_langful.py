@@ -24,6 +24,6 @@ def test() -> None :
     assert lang.languages == data
     lang.languages = {"a": {"a": "q", "b": 123, "c": [1, 2, True], "d": False}, "b": {"a": "a"}, "c": {"q": "p", "d": "none"}}
     assert lang.merge( "a" , "b" , "c" ) == {"q": "p", "d": "none", "a": "a", "b": 123, "c": [1, 2, True]}
-    lang.set_language( { "text" : "the number is {num} { test }" } , "test" )
-    assert lang.replace( "text" , { "num" : 123 } , "test" ) == "the number is 123 { test }"
+    lang.set_language( { "text" : "the number is {num} \\{ test \\}" } , "test" )
+    assert lang.replace( "text" , { "num" : 123 } , locale = "test" ) == "the number is 123 { test }"
     shutil.rmtree( "lang" )

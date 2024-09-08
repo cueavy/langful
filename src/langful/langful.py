@@ -3,7 +3,7 @@ langful class
 """
 
 import typing
-import re
+import copy
 import os
 
 from .locale import getlocale
@@ -122,7 +122,7 @@ class langful :
 
     def merge( self , *locales : str ) -> dict[ str , typing.Any ] :
         if len( locales ) < 1 : raise IndexError( "out of the locales range" )
-        language = self.get_language( locales[ -1 ] ).copy()
+        language = copy.deepcopy( self.get_language( locales[ -1 ] ) )
         for locale in locales[ : -1 ][ : : -1 ] :
             for key , value in self.get_language( locale ).items() :
                 if key not in language : language[ key ] = value
@@ -131,14 +131,42 @@ class langful :
     def merge_all( self , default_locale : str | None = None ) -> None :
         if default_locale is None : default_locale = self.default_locales[ -1 ]
         if default_locale not in self.locales : raise KeyError( "the default locale is not in the locales" )
-        locales = self.locales.copy()
+        locales = copy.deepcopy( self.locales )
         locales.remove( default_locale )
         for locale in locales : self.set_language( self.merge( default_locale , locale ) , locale )
 
-    def replace( self , key : str , data : dict[ str , typing.Any ] , locale : str | None = None ) -> str :
-        def func( match : re.Match ) -> str :
-            return str( data.get( match.group( 1 ) , match.group( 0 ) ) )
-        return re.sub( "\\{(\\w+)\\}" , func , self.get( key , locale ) )
+    def replace( self , key : str , data : dict[ str , typing.Any ] , default : str = "" , locale : str | None = None ) -> str :
+        ret = []
+        name = ""
+        escape = False
+        replace = False
+        for char in str( self.get( key , locale ) ) :
+            match char :
+                case "\\" :
+                    if escape :
+                        ret.append( "\\" )
+                        escape = False
+                    else :
+                        escape = True
+                case "{" :
+                    if escape :
+                        ret.append( "{" )
+                    else :
+                        replace = True
+                case "}" :
+                    if escape :
+                        ret.append( "}" )
+                    else :
+                        ret.append( str( data.get( name , default ) ) )
+                        replace = False
+                        name = ""
+                case _ :
+                    if replace :
+                        name += char.replace( " " , "" )
+                    else :
+                        ret.append( char )
+            if char != "\\" : escape = False
+        return "".join( ret )
 
     def get( self , key : str , locale : str | None = None ) -> typing.Any :
         return self.get_language( locale )[ key ]
