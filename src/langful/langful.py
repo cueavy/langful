@@ -6,6 +6,7 @@ import typing
 import copy
 import os
 
+from . import loader as _loader
 from .locale import getlocale
 from . import default
 
@@ -60,10 +61,10 @@ class langful :
     def __len__( self ) -> int :
         return len( self.languages )
 
-    def __init__( self , path : str | None = "lang" , locale_default : str = "en_us" , loader : default._loader.loader = default.loader() , getlocale : typing.Callable[ ... , str ] = getlocale ) -> None :
+    def __init__( self , path : str | None = "lang" , locale_default : str = "en_us" , loader : _loader.loader = default.loader() , getlocale : typing.Callable[ ... , str ] = getlocale ) -> None :
         self.default_locales : list[ str ] = [ "" , getlocale() , locale_default ]
         self.languages : dict[ str , dict[ str , typing.Any ] ] = {}
-        self.loader : default._loader.loader = loader
+        self.loader : _loader.loader = loader
         self.types : dict[ str , str ] = {}
         self._getlocale = getlocale
         self.path : str = "" if path is None else path
@@ -136,7 +137,7 @@ class langful :
         for locale in locales : self.set_language( self.merge( default_locale , locale ) , locale )
 
     def replace( self , key : str , data : dict[ str , typing.Any ] , default : str = "" , locale : str | None = None ) -> str :
-        ret = []
+        ret : list[ str ] = []
         name = ""
         escape = False
         replace = False
