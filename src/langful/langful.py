@@ -138,35 +138,32 @@ class langful :
 
     def replace( self , key : str , data : dict[ str , typing.Any ] , default : str = "" , locale : str | None = None ) -> str :
         ret : list[ str ] = []
-        name = ""
+        tmp : list[ str ] = []
         escape = False
         replace = False
         for char in str( self.get( key , locale ) ) :
-            match char :
-                case "\\" :
-                    if escape :
-                        ret.append( "\\" )
-                        escape = False
-                    else :
-                        escape = True
-                case "{" :
-                    if escape :
-                        ret.append( "{" )
-                    else :
-                        replace = True
-                case "}" :
-                    if escape :
-                        ret.append( "}" )
-                    else :
-                        ret.append( str( data.get( name , default ) ) )
-                        replace = False
-                        name = ""
-                case _ :
-                    if replace :
-                        name += char.replace( " " , "" )
-                    else :
-                        ret.append( char )
-            if char != "\\" : escape = False
+            if escape :
+                tmp.append( { "a" : "\a" , "b" : "\b" , "f" : "\f" , "n" : "\n" , "r" : "\r" , "t" : "\t" , "v" : "\v" , "\\" : "\\" , "{" : "{" , "}" : "}" }.get( char , f"\\{ char }") )
+                escape = False
+            elif char == "\\" :
+                escape = True
+            elif replace :
+                if char == "}" :
+                    ret.append( str( data.get( "".join( tmp ).strip() , default ) ) )
+                    replace = False
+                    tmp = []
+                else :
+                    tmp.append( char )
+            else :
+                if char == "{" :
+                    replace = True
+                else :
+                    if tmp :
+                        ret.append( "".join( tmp ) )
+                        tmp = []
+                    ret.append( char )
+        if tmp :
+            ret.append( "".join( tmp ) )
         return "".join( ret )
 
     def get( self , key : str , locale : str | None = None ) -> typing.Any :
