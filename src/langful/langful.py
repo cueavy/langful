@@ -16,9 +16,11 @@ class langful :
 
     @property
     def locale( self ) -> str :
-        locales = [ locale for locale in self.default_locales if locale in self.locales ]
-        if locales : return locales[ 0 ]
-        else : raise KeyError( f"no locales are available" )
+        locales = [ locale for locale in self.locale_defaults if locale in self.locales ]
+        if locales :
+            return locales[ 0 ]
+        else :
+            raise KeyError( f"no locales are available" )
 
     @property
     def locales( self ) -> list[ str ] :
@@ -50,7 +52,7 @@ class langful :
         self.save_all()
 
     def __bool__( self ) -> bool :
-        return self.default_locales[ -2 ] in self.languages
+        return self.locale_defaults[ -2 ] in self.languages
 
     def __repr__( self ) -> str :
         return str( self )
@@ -61,55 +63,70 @@ class langful :
     def __len__( self ) -> int :
         return len( self.languages )
 
-    def __init__( self , path : str | None = "lang" , locale_default : str = "en_us" , loader : _loader.loader = default.loader() , getlocale : typing.Callable[ ... , str ] = getlocale ) -> None :
-        self.default_locales : list[ str ] = [ "" , getlocale() , locale_default ]
+    def __init__( self , path : str | None = "lang" , locale_default : str = "en_us" , loader : _loader.loader = default.loader() , locale_get_func : typing.Callable[ ... , str ] = getlocale ) -> None :
+        self.locale_defaults : list[ str ] = [ "" , locale_get_func() , locale_default ]
         self.languages : dict[ str , dict[ str , typing.Any ] ] = {}
+        self.locale_get_func = locale_get_func
         self.loader : _loader.loader = loader
         self.types : dict[ str , str ] = {}
-        self._getlocale = getlocale
         self.path : str = "" if path is None else path
-        if path : self.load_all( path )
+        if path and os.path.isdir( path ) :
+            self.load_all( path )
 
-    def load( self , file : str ) -> bool :
+    def load( self , file : str ) -> None | Exception :
         name = os.path.splitext( os.path.split( file )[ -1 ] )[ 0 ]
-        try : data = self.loader.load( file )
-        except : return False
+        try :
+            data = self.loader.load( file )
+        except Exception as e :
+            return e
         self.types[ name ] = file
         self.languages[ name ] = data
-        return True
 
-    def load_all( self , path : str ) -> None :
-        if not os.path.exists( path ) : raise FileNotFoundError( "the directory is not exist" )
-        elif not os.path.isdir( path ) : raise NotADirectoryError( "the path is exist but not a directory" )
+    def load_all( self , path : str ) -> None | tuple[ tuple[ str , Exception ] , ... ] :
+        ret : list[ tuple[ str , Exception ] ] = []
+        if not os.path.isdir( path ) :
+            raise NotADirectoryError( "the path is not exist or not a directory" )
         for file in os.listdir( path ) :
             file = os.path.join( path , file )
-            if not os.path.isfile( file ) : continue
-            self.load( file )
+            if os.path.isfile( file ) :
+                e = self.load( file )
+                if e :
+                    ret.append( ( file , e ) )
+        return tuple( ret ) if ret else None
 
-    def save( self , locale : str | None = None , file : str | None = None , suffix : str | None = None ) -> bool :
+    def save( self , locale : str | None = None , file : str | None = None , suffix : str | None = None ) -> None | Exception :
         locale = self.get_locale( locale )
-        if file is None : file = self.types[ locale ]
-        try : self.loader.save( file , self.get_language( locale ) , suffix )
-        except : return False
-        return True
+        if file is None :
+            file = self.types[ locale ]
+        try :
+            self.loader.save( file , self.get_language( locale ) , suffix )
+        except Exception as e :
+            return e
 
-    def save_all( self , path : str | None = None ) -> None :
-        if path is not None :
-            if not os.path.exists( path ) : os.makedirs( path )
-            elif not os.path.isdir( path ) : raise NotADirectoryError( "the path is exist but not a directory" )
+    def save_all( self , path : str | None = None ) -> None | tuple[ tuple[ str , Exception ] , ... ] :
+        ret : list[ tuple[ str , Exception ] ] = []
+        if path :
+            if not os.path.isdir( path ) :
+                raise NotADirectoryError( "the path is exist but not a directory" )
+            if not os.path.exists( path ) :
+                os.makedirs( path )
         for locale , file in self.types.items() :
-            if path is not None : file = os.path.join( path , os.path.split( file )[ -1 ] )
-            self.save( locale , file )
+            if path :
+                file = os.path.join( path , os.path.split( file )[ -1 ] )
+            e = self.save( locale , file )
+            if e :
+                ret.append( ( file , e ) )
+        return tuple( ret ) if ret else None
 
-    def reset_default_locales( self , locale_default : str | None = None ) -> None :
-        self.default_locales = [ "" , self._getlocale() , self.default_locales[ -1 ] if locale_default is None else locale_default ]
+    def reset_locale_defaults( self , locale_default : str | None = None ) -> None :
+        self.locale_defaults = [ "" , self.locale_get_func() , self.locale_defaults[ -1 ] if locale_default is None else locale_default ]
 
     def reset_languages( self ) -> None :
         self.languages.clear()
         self.types.clear()
 
     def reset( self ) -> None :
-        self.reset_default_locales()
+        self.reset_locale_defaults()
         self.reset_languages()
 
     def values( self ) -> tuple[ dict[ str , typing.Any ] , ... ] :
@@ -122,19 +139,29 @@ class langful :
         return tuple( self.languages.keys() )
 
     def merge( self , *locales : str ) -> dict[ str , typing.Any ] :
-        if len( locales ) < 1 : raise IndexError( "out of the locales range" )
+        if len( locales ) < 1 :
+            raise IndexError( "out of the locales range" )
         language = copy.deepcopy( self.get_language( locales[ -1 ] ) )
         for locale in locales[ : -1 ][ : : -1 ] :
             for key , value in self.get_language( locale ).items() :
-                if key not in language : language[ key ] = value
+                if key not in language :
+                    language[ key ] = value
         return language
 
-    def merge_all( self , default_locale : str | None = None ) -> None :
-        if default_locale is None : default_locale = self.default_locales[ -1 ]
-        if default_locale not in self.locales : raise KeyError( "the default locale is not in the locales" )
-        locales = copy.deepcopy( self.locales )
-        locales.remove( default_locale )
-        for locale in locales : self.set_language( self.merge( default_locale , locale ) , locale )
+    def merge_all( self , locale_default : str | None = None ) -> None :
+        if locale_default is None :
+            locale_default = self.locale_defaults[ -1 ]
+        if locale_default in self.locales :
+            locales = copy.deepcopy( self.locales )
+            locales.remove( locale_default )
+            for locale in locales :
+                self.set_language( self.merge( locale_default , locale ) , locale )
+        else :
+            raise KeyError( "the default locale is not in the locales" )
+
+    def differ( self , locale_base : str , *locales : str ) -> dict[ str , typing.Any ] :
+        keys = set( self.merge( *locales ).keys() )
+        return { key : value for key , value in self.get_language( locale_base ).items() if key not in keys }
 
     def replace( self , key : str , data : dict[ str , typing.Any ] , default : str = "" , locale : str | None = None ) -> str :
         ret : list[ str ] = []
@@ -192,7 +219,7 @@ class langful :
         self.types[ self.get_locale( locale ) ] = type
 
     def set_locale( self , locale : str = "" ) -> None :
-        self.default_locales[ 0 ] = locale
+        self.locale_defaults[ 0 ] = locale
 
     def remove( self , key : str , locale : str | None = None ) -> None :
         del self.get_language( locale )[ key ]
@@ -205,7 +232,7 @@ class langful :
         del self.types[ self.get_locale( locale ) ]
 
     def remove_locale( self ) -> None :
-        self.default_locales[ 0 ] = ""
+        self.locale_defaults[ 0 ] = ""
 
     def pop( self , key : str , locale : str | None = None ) -> typing.Any :
         ret = self.get( key , locale )

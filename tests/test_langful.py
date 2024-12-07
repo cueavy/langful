@@ -6,7 +6,7 @@ def test() -> None :
         with open( "lang/en_us.lang" , "w" , encoding = "utf-8" ) as fp : fp.write( "a=b\nb=c\np=0" )
         with open( "lang/zh_cn.json" , "w" , encoding = "utf-8" ) as fp : fp.write( """{"a":"test","b":"测试","c":[null,false,3]}""" )
         lang = langful()
-        lang.default_locales[-2] = "zh_cn"
+        lang.locale_defaults[-2] = "zh_cn"
         assert len( lang ) == 2
         assert "en_us" in lang
         assert bool( lang )
