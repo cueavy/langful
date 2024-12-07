@@ -6,6 +6,7 @@ import typing
 import json
 
 from . import loader as _loader
+from .func import format
 
 __all__ = [ "JSON" , "LANG" , "loader" ]
 
@@ -36,7 +37,9 @@ class LANG( _loader.parser ) :
             for line in fp.readlines() :
                 line = line.partition( "#" )[ 0 ]
                 key , sep , value = line.partition( "=" )
-                if sep : ret[ key.strip() ] = value.strip()
+                if sep == "" :
+                    continue
+                ret[ key.strip() ] = format( value.strip() )
         return ret
 
     def save( self , data : dict[ str , typing.Any ] , path : str ) -> None :

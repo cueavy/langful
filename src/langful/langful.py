@@ -143,7 +143,10 @@ class langful :
         replace = False
         for char in str( self.get( key , locale ) ) :
             if escape :
-                tmp.append( { "a" : "\a" , "b" : "\b" , "f" : "\f" , "n" : "\n" , "r" : "\r" , "t" : "\t" , "v" : "\v" , "\\" : "\\" , "{" : "{" , "}" : "}" }.get( char , f"\\{ char }") )
+                if char in ( "{" , "}" ) :
+                    ret.append( char )
+                else :
+                    ret.append( f"\\{ char }" )
                 escape = False
             elif char == "\\" :
                 escape = True
