@@ -6,9 +6,9 @@ import typing
 import abc
 import os
 
-__all__ = [ "langful_parser" , "langful_loader" ]
+__all__ = [ "parser_langful" , "loader_langful" ]
 
-class langful_parser :
+class parser_langful :
 
     def __init__( self ) -> None :
         self.suffix : tuple[ str ] | str
@@ -21,23 +21,23 @@ class langful_parser :
     def save( self , data : dict[ str , typing.Any ] , path : str ) -> None :
         pass
 
-class langful_loader :
+class loader_langful :
 
     def __contains__( self , key : str ) -> bool :
         return key in self.suffixes
 
-    def __getitem__( self , key : str ) -> langful_parser :
+    def __getitem__( self , key : str ) -> parser_langful :
         return self.suffixes[ key ]
 
     @property
-    def suffixes( self ) -> dict[ str , langful_parser ] :
-        suffixes : dict[ str , langful_parser ] = {}
+    def suffixes( self ) -> dict[ str , parser_langful ] :
+        suffixes : dict[ str , parser_langful ] = {}
         for p in self.parsers :
             suffixes.update( { suffix : p for suffix in ( p.suffix if isinstance( p.suffix , tuple ) else ( p.suffix , ) ) } )
         return suffixes
 
     def __init__( self ) -> None :
-        self.parsers : list[ langful_parser ] = []
+        self.parsers : list[ parser_langful ] = []
 
     def load( self , file : str , suffix : str | None = None ) -> dict[ str , typing.Any ] :
         if suffix is None :

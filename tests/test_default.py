@@ -1,6 +1,6 @@
 import typing
 
-from langful.default import *
+from langful.langful import *
 from lib import *
 
 def test() -> None :
