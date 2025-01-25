@@ -3,41 +3,29 @@ loader
 """
 
 import typing
-import abc
 import os
 
-__all__ = [ "parser_langful" , "loader_langful" ]
+from . import parser
 
-class parser_langful :
-
-    def __init__( self ) -> None :
-        self.suffix : tuple[ str ] | str
-
-    @abc.abstractmethod
-    def load( self , path : str ) -> dict[ str , typing.Any ] :
-        pass
-
-    @abc.abstractmethod
-    def save( self , data : dict[ str , typing.Any ] , path : str ) -> None :
-        pass
+__all__ = [ "loader_langful" , "loader_assetful" ]
 
 class loader_langful :
 
     def __contains__( self , key : str ) -> bool :
         return key in self.suffixes
 
-    def __getitem__( self , key : str ) -> parser_langful :
+    def __getitem__( self , key : str ) -> parser.parser_langful :
         return self.suffixes[ key ]
 
     @property
-    def suffixes( self ) -> dict[ str , parser_langful ] :
-        suffixes : dict[ str , parser_langful ] = {}
+    def suffixes( self ) -> dict[ str , parser.parser_langful ] :
+        suffixes : dict[ str , parser.parser_langful ] = {}
         for p in self.parsers :
             suffixes.update( { suffix : p for suffix in ( p.suffix if isinstance( p.suffix , tuple ) else ( p.suffix , ) ) } )
         return suffixes
 
     def __init__( self ) -> None :
-        self.parsers : list[ parser_langful ] = []
+        self.parsers : list[ parser.parser_langful ] = []
 
     def load( self , file : str , suffix : str | None = None ) -> dict[ str , typing.Any ] :
         if suffix is None :
@@ -58,3 +46,7 @@ class loader_langful :
         if suffix not in self :
             raise KeyError( f"no parser can load file with '{ suffix }' suffix" )
         self.suffixes[ suffix ].save( data , file )
+
+class loader_assetful :
+
+    pass
