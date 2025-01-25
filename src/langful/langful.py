@@ -7,8 +7,8 @@ import copy
 import os
 
 from . import loader as _loader
-from .locale import getlocale
 from . import default
+from . import func
 
 __all__ = [ "langful" ]
 
@@ -63,11 +63,11 @@ class langful :
     def __len__( self ) -> int :
         return len( self.languages )
 
-    def __init__( self , path : str | None = "lang" , locale_default : str = "en_us" , loader : _loader.loader = default.loader() , locale_get_func : typing.Callable[ ... , str ] = getlocale ) -> None :
+    def __init__( self , path : str | None = "lang" , locale_default : str = "en_us" , loader : _loader.langful_loader = default.langful_loader() , locale_get_func : typing.Callable[ ... , str ] = func.getlocale ) -> None :
         self.locale_defaults : list[ str ] = [ "" , locale_get_func() , locale_default ]
         self.languages : dict[ str , dict[ str , typing.Any ] ] = {}
         self.locale_get_func = locale_get_func
-        self.loader : _loader.loader = loader
+        self.loader : _loader.langful_loader = loader
         self.types : dict[ str , str ] = {}
         self.path : str = "" if path is None else path
         if path and os.path.isdir( path ) :
@@ -213,7 +213,8 @@ class langful :
 
     def set_language( self , data : dict[ str , typing.Any ] = {} , locale : str | None = None , type : str | None = None ) -> None :
         self.languages[ self.get_locale( locale ) ] = data
-        if type is not None : self.set_type( type )
+        if type is not None :
+            self.set_type( type )
 
     def set_type( self , type : str = ".json" , locale : str | None = None ) -> None :
         self.types[ self.get_locale( locale ) ] = type

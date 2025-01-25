@@ -5,12 +5,12 @@ default loader
 import typing
 import json
 
-from . import loader as _loader
 from .func import format
+from . import loader
 
-__all__ = [ "JSON" , "LANG" , "loader" ]
+__all__ = [ "JSON" , "LANG" , "langful_loader" ]
 
-class JSON( _loader.parser ) :
+class JSON( loader.langful_parser ) :
 
     def __init__( self ) -> None :
         super().__init__()
@@ -25,7 +25,7 @@ class JSON( _loader.parser ) :
         with open( path , "w" , encoding = "utf-8" ) as fp :
             json.dump( data , fp , **self.kwargs )
 
-class LANG( _loader.parser ) :
+class LANG( loader.langful_parser ) :
 
     def __init__( self ) -> None :
         super().__init__()
@@ -47,7 +47,7 @@ class LANG( _loader.parser ) :
             for key , value in data.items() :
                 fp.write( f"{ key } = { value }\n" )
 
-class loader( _loader.loader ) :
+class langful_loader( loader.langful_loader ) :
 
     def __init__( self ) -> None :
         super().__init__()

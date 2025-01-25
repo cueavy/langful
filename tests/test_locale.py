@@ -1,5 +1,5 @@
-from langful import locale
+from langful import func
 
 def test() -> None :
-    assert locale.getlocale()
-    assert locale.getencoding()
+    assert func.getlocale()
+    assert func.getencoding()

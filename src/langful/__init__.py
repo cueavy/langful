@@ -3,7 +3,7 @@ provides internationalization for python
 """
 
 from .func import *
-from .locale import *
 from .langful import *
+from .assetful import *
 
-__version__ = "1.0.6"
+__version__ = "1.1.0"
