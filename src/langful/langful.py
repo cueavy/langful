@@ -8,11 +8,12 @@ import copy
 import os
 
 from . import loader
+from . import parser
 from . import func
 
 __all__ = [ "JSON" , "LANG" , "loader_default" , "langful" ]
 
-class JSON( loader.parser_langful ) :
+class JSON( parser.parser_langful ) :
 
     def __init__( self ) -> None :
         super().__init__()
@@ -27,7 +28,7 @@ class JSON( loader.parser_langful ) :
         with open( path , "w" , encoding = "utf-8" ) as fp :
             json.dump( data , fp , **self.kwargs )
 
-class LANG( loader.parser_langful ) :
+class LANG( parser.parser_langful ) :
 
     def __init__( self ) -> None :
         super().__init__()
