@@ -1,6 +1,6 @@
 import typing
 
-from langful.langful import *
+from langful.default import *
 from lib import *
 
 def test() -> None :
@@ -13,3 +13,7 @@ def test() -> None :
         data : dict[ str , typing.Any ] = { "a" : "b" , "q" : "a" , "v" : "q" }
         LANG().save( data , name )
         assert LANG().load( name ) == data
+        name = os.path.join( path , "tmp.csv" )
+        data : dict[ str , typing.Any ] = { "a" : "b" , "q" : "a" , "v" : "q" }
+        CSV().save( data , name )
+        assert CSV().load( name ) == data

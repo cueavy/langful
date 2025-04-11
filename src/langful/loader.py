@@ -48,5 +48,4 @@ class loader_langful :
         self.suffixes[ suffix ].save( data , file )
 
 class loader_assetful :
-
     pass

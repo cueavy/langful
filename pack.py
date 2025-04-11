@@ -24,4 +24,4 @@ with open( "pyproject.toml" , "w" , encoding = "utf-8" ) as file :
 
 if os.path.exists( "dist" ) :
     shutil.rmtree( "dist" )
-subprocess.check_call( ( sys.executable , "-m" , "build" ) )
+subprocess.check_call( ( sys.executable , "-m" , "build" , "-w" ) )

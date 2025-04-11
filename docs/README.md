@@ -17,11 +17,36 @@
     <hr>
 </div>
 
-# install
+# About
+
+This is a simple module which is used for internationalization(i18n).
+
+You just need place localization files in a directory, like this:
+
+```
+- lang
+- - en_us.json
+- - zh_cn.json
+```
+
+```python
+import langful
+
+lang = langful( "lang" )
+
+print( lang )
+
+```
+
+The default language code is obtained using the `locale` module and follows the [RFC 1766](https://datatracker.ietf.org/doc/html/rfc1766.html) standard.
+
+`langful` supports three default localization file types, and you can easily add custom loaders.
+
+# Install
 
 `pip install langful`
 
-# about
+# Links
 
 [
 [github](https://github.com/cueavy/langful)

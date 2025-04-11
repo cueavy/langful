@@ -30,7 +30,6 @@ def getencoding() -> str :
     else :
         return ""
 
-
 def format( text : str ) -> str :
     ret : list[ str ] = []
     escape = False

@@ -3,59 +3,14 @@ langful class
 """
 
 import typing
-import json
 import copy
 import os
 
+from . import default
 from . import loader
-from . import parser
 from . import func
 
-__all__ = [ "JSON" , "LANG" , "loader_default" , "langful" ]
-
-class JSON( parser.parser_langful ) :
-
-    def __init__( self ) -> None :
-        super().__init__()
-        self.suffix = ".json"
-        self.kwargs : dict[ str , typing.Any ] = { "ensure_ascii" : False , "indent" : 4 , "separators" : ( "," , ": " ) }
-
-    def load( self , path : str ) -> dict[ str , typing.Any ] :
-        with open( path , "rb" ) as fp :
-            return json.load( fp )
-
-    def save( self , data : dict[ str , typing.Any ] , path : str ) -> None :
-        with open( path , "w" , encoding = "utf-8" ) as fp :
-            json.dump( data , fp , **self.kwargs )
-
-class LANG( parser.parser_langful ) :
-
-    def __init__( self ) -> None :
-        super().__init__()
-        self.suffix = ".lang"
-
-    def load( self , path : str ) -> dict[ str , typing.Any ] :
-        ret : dict[ str , typing.Any ] = {}
-        with open( path , "r" , encoding = "utf-8" ) as fp :
-            for line in fp.readlines() :
-                line = line.partition( "#" )[ 0 ]
-                key , sep , value = line.partition( "=" )
-                if sep == "" :
-                    continue
-                ret[ key.strip() ] = format( value.strip() )
-        return ret
-
-    def save( self , data : dict[ str , typing.Any ] , path : str ) -> None :
-        with open( path , "w" , encoding = "utf-8" ) as fp :
-            for key , value in data.items() :
-                fp.write( f"{ key } = { value }\n" )
-
-class loader_default( loader.loader_langful ) :
-
-    def __init__( self ) -> None :
-        super().__init__()
-        self.parsers.append( JSON() )
-        self.parsers.append( LANG() )
+__all__ = [ "langful" ]
 
 class langful :
 
@@ -108,7 +63,7 @@ class langful :
     def __len__( self ) -> int :
         return len( self.languages )
 
-    def __init__( self , path : str | None = "lang" , locale_default : str = "en_us" , loader_langful : loader.loader_langful = loader_default() , locale_get_func : typing.Callable[ ... , str ] = func.getlocale ) -> None :
+    def __init__( self , path : str | None = "lang" , locale_default : str = "en_us" , loader_langful : loader.loader_langful = default.loader_langful() , locale_get_func : typing.Callable[ ... , str ] = func.getlocale ) -> None :
         self.locale_defaults : list[ str ] = [ "" , locale_get_func() , locale_default ]
         self.languages : dict[ str , dict[ str , typing.Any ] ] = {}
         self.locale_get_func = locale_get_func

@@ -13,7 +13,6 @@
         "classifiers": [
             "Programming Language :: Python :: 3",
             "Programming Language :: Python :: 3.10",
-            "License :: OSI Approved :: MIT License",
             "Topic :: Software Development :: Internationalization",
             "Operating System :: OS Independent"
         ],
@@ -23,12 +22,20 @@
                 "email": "cueavy@outlook.com"
             }
         ],
-        "license": {
-            "file": "LICENSE"
-        },
+        "license": "MIT",
         "urls": {
             "Homepage": "https://github.com/cueavy/langful",
-            "Source": "https://github.com/cueavy/langful.git"
+            "Bug": "https://github.com/cueavy/langful/issues",
+            "Source": "https://github.com/cueavy/langful.git",
+            "Download": "https://pypi.org/project/langful",
+            "Documentation": "https://github.com/cueavy/langful/tree/master/docs"
+        }
+    },
+    "tool": {
+        "setuptools": {
+            "package-dir": {
+                "": "src"
+            }
         }
     }
 }
