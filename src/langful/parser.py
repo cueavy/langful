@@ -8,7 +8,7 @@ import abc
 __all__ = ["parser_langful", "parser_assetful"]
 
 
-class parser_langful:
+class parser_langful(abc.ABC):
 
     def __init__(self) -> None:
         self.suffix: tuple[str] | str
@@ -22,7 +22,7 @@ class parser_langful:
         pass
 
 
-class parser_assetful:
+class parser_assetful(abc.ABC):
 
     def __init__(self) -> None:
         pass

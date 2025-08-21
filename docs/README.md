@@ -23,11 +23,9 @@ This is a simple module which is used for internationalization(i18n).
 
 You just need place localization files in a directory, like this:
 
-```
 - lang
 - - en_us.json
 - - zh_cn.json
-```
 
 ```python
 import langful

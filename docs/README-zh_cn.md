@@ -23,11 +23,9 @@
 
 你只需要将本地化文件放入一个文件夹中,就像这样:
 
-```
 - lang
 - - en_us.json
 - - zh_cn.json
-```
 
 ```python
 import langful

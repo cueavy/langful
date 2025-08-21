@@ -30,7 +30,7 @@ class langful:
 
     @property
     def language(self) -> dict[str, typing.Any]:
-        return self.languages[self.locale]
+        return self.lazyloading(self.locale)
 
     def __getitem__(self, key: str) -> str:
         return self.get(key)
@@ -65,21 +65,23 @@ class langful:
     def __len__(self) -> int:
         return len(self.languages)
 
-    def __init__(self, path: str | None = "lang", locale_default: str = "en_us", loader_langful: loader.loader_langful = default.loader_langful(), locale_get_func: typing.Callable[..., str] = func.getlocale) -> None:
+    def __init__(self, path: str | None = "lang", locale_default: str = "en_us", loader_langful: loader.loader_langful = default.loader_langful(), locale_get_func: typing.Callable[..., str] = func.getlocale, lazyload: bool = False) -> None:
         self.locale_defaults: list[str] = [
             "", locale_get_func(), locale_default]
-        self.languages: dict[str, dict[str, typing.Any]] = {}
+        self.languages: dict[str, dict[str, typing.Any] | loader.Lazyload] = {}
         self.locale_get_func = locale_get_func
         self.loader: loader.loader_langful = loader_langful
         self.types: dict[str, str] = {}
         self.path: str = "" if path is None else path
+        self.lazyload: bool = lazyload
         if path and os.path.isdir(path):
             self.load_all(path)
 
     def load(self, file: str) -> None | Exception:
         name = os.path.splitext(os.path.split(file)[-1])[0]
         try:
-            data = self.loader.load(file)
+            data = self.loader.lazyload(
+                file) if self.lazyload else self.loader.load(file)
         except Exception as e:
             return e
         self.types[name] = file
@@ -97,6 +99,13 @@ class langful:
                 if e:
                     ret.append((file, e))
         return tuple(ret) if ret else None
+
+    def lazyloading(self, locale: str | None = None) -> dict[str, typing.Any]:
+        return self.get_language(locale)
+
+    def lazyloading_all(self) -> None:
+        for locale in self.locales:
+            self.lazyloading(locale)
 
     def save(self, locale: str | None = None, file: str | None = None, suffix: str | None = None) -> None | Exception:
         locale = self.get_locale(locale)
@@ -135,10 +144,10 @@ class langful:
         self.reset_locale_defaults()
         self.reset_languages()
 
-    def values(self) -> tuple[dict[str, typing.Any], ...]:
+    def values(self) -> tuple[dict[str, typing.Any] | loader.Lazyload, ...]:
         return tuple(self.languages.values())
 
-    def items(self) -> tuple[tuple[str, dict[str, typing.Any]], ...]:
+    def items(self) -> tuple[tuple[str, dict[str, typing.Any] | loader.Lazyload], ...]:
         return tuple(zip(self.keys(), self.values()))
 
     def keys(self) -> tuple[str, ...]:
@@ -206,7 +215,12 @@ class langful:
         return self.get_language(locale)[key]
 
     def get_language(self, locale: str | None = None) -> dict[str, typing.Any]:
-        return self.languages[self.get_locale(locale)]
+        locale = self.get_locale(locale)
+        language = self.languages[locale]
+        if isinstance(language, loader.Lazyload):
+            language = language.load()
+            self.languages[locale] = language
+        return language
 
     def get_type(self, locale: str | None = None) -> str:
         return self.types[self.get_locale(locale)]

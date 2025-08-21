@@ -7,7 +7,18 @@ import os
 
 from . import parser
 
-__all__ = ["loader_langful", "loader_assetful"]
+__all__ = ["Lazyload", "loader_langful", "loader_assetful"]
+
+
+class Lazyload:
+
+    def __init__(self, func: typing.Callable[..., typing.Any], *args: typing.Any, **kwargs: dict[str, typing.Any]) -> None:
+        self.func: typing.Callable[..., typing.Any] = func
+        self.args: tuple[typing.Any, ...] = args
+        self.kwargs: dict[str, typing.Any] = kwargs
+
+    def load(self) -> typing.Any:
+        return self.func(*self.args, **self.kwargs)
 
 
 class loader_langful:
@@ -39,6 +50,9 @@ class loader_langful:
         elif not os.path.isfile(file):
             raise IsADirectoryError("the path is exist but not a file")
         return self.suffixes[suffix].load(file)
+
+    def lazyload(self, file: str, suffix: str | None = None) -> Lazyload:
+        return Lazyload(self.load, file, suffix)
 
     def save(self, file: str, data: dict[str, typing.Any], suffix: str | None = None) -> None:
         if os.path.exists(file) and not os.path.isfile(file):
