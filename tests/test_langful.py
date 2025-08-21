@@ -46,4 +46,4 @@ def test_lazyload() -> None:
         assert isinstance(lang.get_language("en_us"), dict)
         assert isinstance(lang.languages["zh_cn"], Lazyload)
         assert isinstance(lang.get_language("zh_cn"), dict)
-    test(True)
+    test(lazyload=True)
